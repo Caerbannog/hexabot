@@ -67,7 +67,7 @@ uint8_t CommandOutPoll(uint8_t * buffer, uint8_t max_len)
     }
 
     // Prepare dual-ram buffer for next OUT transaction
-    handle_out = USBRxOnePacket(COMMAND_EP, (uint8_t*)&buffer_out, sizeof(buffer_out) /*TODO accurate size*/);
+    handle_out = USBRxOnePacket(COMMAND_EP, (uint8_t*)&buffer_out, sizeof(buffer_out));
 
     return len;
 }

@@ -101,10 +101,13 @@ class controller:
             
     
     def dump_metrics(self):
+        TIMER_PERIOD = 0 # TODO: update
+        TIMER_MAX = 0 # TODO: update
+        
         fmt = struct.Struct('<BHf') # little-endian, uint8_t, uint16_t, float
         
         last_realtime = -1
-        last_datatime = -1
+        last_timer = -1
         
         with open('metrics.txt', 'a') as file_out:
             while True:
@@ -116,16 +119,17 @@ class controller:
                     if len(raw_metrics) % fmt.size != 0:
                         raise Exception('Unaligned metrics size %d' % len(raw_metrics))
                     
-                    for (m_id, m_datatime, m_value) in fmt.iter_unpack(raw_metrics):
+                    for (m_id, m_timer, m_value) in fmt.iter_unpack(raw_metrics):
                         if last_realtime == -1: # This will be the reference point
                             last_realtime = time.time()
-                            last_datatime = m_datatime
-                        
-                        # TODO: elif last_datatime < m_datatime: # Rollover
-                        #~ else:
-                            #~ last_realtime = last_realtime + (m_datatime - last_datatime) * 1 # TODO
-                            #~ last_datatime = m_datatime
-                            # TODO: if last_realtime < time.time() + ticker_max_delay: we lost track of time
+                            last_timer = m_timer
+                        else:
+                            last_realtime = last_realtime + TIMER_PERIOD * (m_timer - last_timer) / TIMER_MAX
+                            
+                            if m_timer < last_timer: # Rollover
+                                last_realtime += TIMER_PERIOD
+                            
+                            last_timer = m_timer
                         
                         line = "%d %f %.2f" % (m_id, last_realtime, m_value)
                         print(line)

@@ -5,7 +5,8 @@ Overview
 --------
 Design files and source code of a mobile robot for the [Eurobot competition](http://www.eurobot.org/).
 
-The controller board is built in KiCad around a [dsPIC33EP256MU806](https://www.microchip.com/products/dsPIC33EP256MU806) (QFN, motor control, USB).
+The controller board is built in [KiCad](http://www.kicad-pcb.org/)
+around a [dsPIC33EP256MU806](https://www.microchip.com/products/dsPIC33EP256MU806) (QFN, motor control, USB).
 You can control it from an embedded Linux like the Raspberry Pi.
 
 Python scripts use [PyUSB](https://walac.github.io/pyusb/) to communicate with the various interfaces (commands, odometry, metrics, debug logs).
@@ -32,12 +33,34 @@ Show the debug console:
 
 Documentation
 -------------
+### Hexabot Controller ###
+The board handles various functions: motor control, odometry, sensors and servomotors.
+It has two layers, 10cm*10cm and mostly 0806 SMT components.
+
+You can buy 10 PCBs for 32$ at [SeeedStudio](http://www.seeedstudio.com/service/index.php?r=pcb).
+Then we hand-soldered ours.
+
 TODO:
 
 - board functions
+
+![Layout v1](kicad/v1-layout.png)
+
+### dsPIC Software ###
+Refer to the source code in [hexabot.X](hexabot.X/).
+
+TODO:
+
 - code architecture
-- wire protocol
-- high level IA
+- role of endpoints
+- wire protocols
+
+### Linux Software ###
+Refer to the source code in [linux](linux/).
+
+TODO
+
+- high level AI
 
 Contributing
 ------------

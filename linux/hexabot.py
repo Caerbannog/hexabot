@@ -23,9 +23,12 @@ METRICS_IN_EP = 5 + 0x80
 
 COMMAND_OUT_SIZE = 64
 COMMAND_IN_SIZE  = 64
+ISOCHRONOUS_IN_SIZE = 128 # TODO: update
 METRICS_IN_SIZE  = 64
 
 COMMAND_TIMEOUT = 1000
+INTERACTION_TIMEOUT = 500 # used to respond to KeyboardInterrupt
+
 
 class controller:
     def __init__(self, interface_numbers):
@@ -79,8 +82,23 @@ class controller:
             else:
                 raise
     
-    def handle_isochronous():
-        pass # TODO
+    
+    def dump_isochronous():
+        while True:
+            try:
+                frame = self.dev.read(ISOCHRONOUS_IN_EP, ISOCHRONOUS_IN_SIZE,
+                                      interface=ISOCHRONOUS_INTERFACE,
+                                      timeout=INTERACTION_TIMEOUT)
+                
+                print(' '.join([format(i, '02x') for i in frame]))
+            except KeyboardInterrupt:
+                return
+            except usb.core.USBError as e:
+                if e.args == (110, 'Operation timed out'):
+                    continue
+                else:
+                    raise
+            
     
     def dump_metrics(self):
         fmt = struct.Struct('<BHf') # little-endian, uint8_t, uint16_t, float
@@ -93,7 +111,7 @@ class controller:
                 try:
                     raw_metrics = self.dev.read(METRICS_IN_EP, METRICS_IN_SIZE,
                                                 interface=METRICS_INTERFACE,
-                                                timeout=500) # Timeout to respond to KeyboardInterrupt
+                                                timeout=INTERACTION_TIMEOUT)
                     
                     if len(raw_metrics) % fmt.size != 0:
                         raise Exception('Unaligned metrics size %d' % len(raw_metrics))

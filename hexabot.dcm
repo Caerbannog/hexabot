@@ -17,6 +17,12 @@ D DC Barrel Jack
 K DC power barrel jack connector
 $ENDCMP
 #
+$CMP BSS138
+D BSS138, 50V Vds, 0.22A Id, N-Channel MOSFET, SOT-23
+K N-Channel MOSFET Logic Level
+F http://www.fairchildsemi.com/ds/BS/BSS138.pdf
+$ENDCMP
+#
 $CMP C
 D Unpolarized capacitor
 $ENDCMP
@@ -83,6 +89,11 @@ $ENDCMP
 $CMP USB_B
 D USB B connector
 K USB USB_B
+$ENDCMP
+#
+$CMP ZENER
+D Diode zener
+K DEV DIODE
 $ENDCMP
 #
 #End Doc Library

@@ -17,12 +17,6 @@ D DC Barrel Jack
 K DC power barrel jack connector
 $ENDCMP
 #
-$CMP BSS138
-D BSS138, 50V Vds, 0.22A Id, N-Channel MOSFET, SOT-23
-K N-Channel MOSFET Logic Level
-F http://www.fairchildsemi.com/ds/BS/BSS138.pdf
-$ENDCMP
-#
 $CMP C
 D Unpolarized capacitor
 $ENDCMP
@@ -54,6 +48,11 @@ $CMP GND
 K POWER, PWR
 $ENDCMP
 #
+$CMP HOLE_M3
+D Mounting Hole M3
+K Hole Screw M3
+$ENDCMP
+#
 $CMP L6201PS
 D L6201PS H-bridge PowerSO20
 K H-Bridge Full Drive Motor
@@ -64,10 +63,21 @@ $CMP LED
 K LED
 $ENDCMP
 #
+$CMP MCP1727
+D MCP1727 Fixed LDO Regulator
+K LDO Regulator
+F http://www.farnell.com/datasheets/490994.pdf
+$ENDCMP
+#
 $CMP PTN78020
 D PTN78020, 6-A WIDE-INPUT ADJUSTABLE SWITCHING REGULATOR
 K Power Switching Regulator
 F http://www.farnell.com/datasheets/1874637.pdf
+$ENDCMP
+#
+$CMP Q_NMOS_GSD
+D Transistor N-MOSFET (general)
+K nmos n-mos n-mosfet transistor
 $ENDCMP
 #
 $CMP R

@@ -1,15 +1,109 @@
 EESchema-DOCLIB  Version 2.0
 #
+$CMP +3V3
+K POWER, PWR
+$ENDCMP
+#
+$CMP +5V
+K POWER, PWR
+$ENDCMP
+#
+$CMP +BATT
+K POWER, PWR
+$ENDCMP
+#
+$CMP BARREL_JACK
+D DC Barrel Jack
+K DC power barrel jack connector
+$ENDCMP
+#
+$CMP C
+D Unpolarized capacitor
+$ENDCMP
+#
+$CMP CP
+D Polarised capacitor
+$ENDCMP
+#
+$CMP Crystal
+D Two pin crystal
+K Quartz, Ceramic, Filter, Resonator
+$ENDCMP
+#
+$CMP D
+D Diode
+$ENDCMP
+#
 $CMP DSPIC33EP256MU806
 D DSPIC33EP256MU806, 70MIPS, 256k Flash, 28k SRAM
 K 16-bit Digital Signal Controller Microchip dsPIC Motor Control USB
 F http://ww1.microchip.com/downloads/en/DeviceDoc/70616g.pdf
 $ENDCMP
 #
+$CMP D_Schottky
+D Diode schottky
+$ENDCMP
+#
+$CMP GND
+K POWER, PWR
+$ENDCMP
+#
+$CMP HOLE_M3
+D Mounting Hole M3
+K Hole Screw M3
+$ENDCMP
+#
 $CMP L6201PS
 D L6201PS H-bridge PowerSO20
 K H-Bridge Full Drive Motor
 F http://www.st.com/web/en/resource/technical/document/datasheet/CD00000089.pdf
+$ENDCMP
+#
+$CMP LED
+K LED
+$ENDCMP
+#
+$CMP MCP1727
+D MCP1727 Fixed LDO Regulator
+K LDO Regulator
+F http://www.farnell.com/datasheets/490994.pdf
+$ENDCMP
+#
+$CMP PTN78020
+D PTN78020, 6-A WIDE-INPUT ADJUSTABLE SWITCHING REGULATOR
+K Power Switching Regulator
+F http://www.farnell.com/datasheets/1874637.pdf
+$ENDCMP
+#
+$CMP Q_NMOS_GSD
+D Transistor N-MOSFET (general)
+K nmos n-mos n-mosfet transistor
+$ENDCMP
+#
+$CMP R
+D Resistor
+K R DEV
+$ENDCMP
+#
+$CMP SPST
+D Interrupteur simple
+K switch
+$ENDCMP
+#
+$CMP TL431DBZ
+D TL431 Shunt Regulator, SOT-23
+K diode device shunt regulator
+F http://www.ti.com/lit/ds/symlink/tl431.pdf
+$ENDCMP
+#
+$CMP USB_B
+D USB B connector
+K USB USB_B
+$ENDCMP
+#
+$CMP ZENER
+D Diode zener
+K DEV DIODE
 $ENDCMP
 #
 #End Doc Library

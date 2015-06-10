@@ -1,4 +1,4 @@
-update=lun. 08 juin 2015 00:48:31 CEST
+update=mer. 10 juin 2015 23:05:30 CEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -27,6 +27,7 @@ NetIExt=net
 version=1
 [eeschema]
 version=1
-LibDir=~/kicad_sources/library-repos;~/library-repos/kicad-library/library
+LibDir=~/kicad_sources/library-repos;../kicad_sources/library-repos/kicad-library/library
 [eeschema/libraries]
 LibName1=hexabot
+LibName2=kicad-library/library/power

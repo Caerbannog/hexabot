@@ -1,4 +1,4 @@
-update=jeu. 11 juin 2015 21:15:00 CEST
+update=jeu. 11 juin 2015 21:22:02 CEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -23,12 +23,6 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
-[eeschema]
-version=1
-LibDir=~/kicad_sources/library-repos;../kicad_sources/library-repos/kicad-library/library
-[eeschema/libraries]
-LibName1=hexabot
-LibName2=kicad-library/library/power
 [general]
 version=1
 [schematic_editor]
@@ -41,3 +35,11 @@ NetFmtName=
 SpiceForceRefPrefix=0
 SpiceUseNetNumbers=0
 LabSize=60
+[eeschema]
+version=1
+LibDir=~/kicad_sources/library-repos;../kicad_sources/library-repos/kicad-library/library
+[eeschema/libraries]
+LibName1=hexabot
+LibName2=kicad-library/library/power
+LibName3=kicad-library/library/device
+LibName4=kicad-library/library/conn

@@ -6,7 +6,7 @@ EELAYER 25 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 3 3
+Sheet 2 3
 Title ""
 Date ""
 Rev ""
@@ -22,6 +22,7 @@ U 1 1 557880D8
 P 5700 3200
 AR Path="/5578B32E/557880D8" Ref="U5"  Part="1" 
 AR Path="/5578F5CB/557880D8" Ref="U6"  Part="1" 
+AR Path="/557880D8" Ref="U5"  Part="1" 
 F 0 "U5" H 5400 3850 60  0000 C CNN
 F 1 "L6201PS" H 5550 3950 60  0000 C CNN
 F 2 "" H 5300 3750 60  0000 C CNN
@@ -154,7 +155,7 @@ P 7000 3050
 AR Path="/5578B32E/55788757" Ref="R31"  Part="1" 
 AR Path="/5578F5CB/55788757" Ref="R34"  Part="1" 
 F 0 "R31" V 7080 3050 50  0000 C CNN
-F 1 "0R4" V 7000 3050 50  0000 C CNN
+F 1 "0R1 3W" V 7000 3050 50  0000 C CNN
 F 2 "" V 6930 3050 30  0000 C CNN
 F 3 "" H 7000 3050 30  0000 C CNN
 	1    7000 3050
@@ -376,14 +377,23 @@ F 3 "" H 6750 2900 60  0000 C CNN
 	1    6750 2900
 	0    -1   -1   0   
 $EndComp
-Text Notes 6650 2800 0    60   ~ 0
-TODO: utile ?
 Wire Wire Line
 	4100 3200 4100 3250
 Text HLabel 3850 3200 0    60   Input ~ 0
 MOTOR_POWER
 Text Notes 7500 3000 0    60   ~ 0
 No load current\nfor GR42x25: 6.5A
-Text Notes 5350 4200 0    60   ~ 0
-TODO: connect\n
+$Comp
+L GND #PWR?
+U 1 1 557A2B97
+P 5700 4000
+AR Path="/5578B32E/557A2B97" Ref="#PWR?"  Part="1" 
+AR Path="/5578F5CB/557A2B97" Ref="#PWR?"  Part="1" 
+F 0 "#PWR?" H 5700 3750 50  0001 C CNN
+F 1 "GND" H 5700 3850 50  0000 C CNN
+F 2 "" H 5700 4000 60  0000 C CNN
+F 3 "" H 5700 4000 60  0000 C CNN
+	1    5700 4000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

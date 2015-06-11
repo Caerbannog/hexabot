@@ -1,4 +1,4 @@
-update=mer. 10 juin 2015 23:05:30 CEST
+update=jeu. 11 juin 2015 21:15:00 CEST
 version=1
 last_client=kicad
 [pcbnew]
@@ -23,11 +23,21 @@ ModuleOutlineThickness=0.150000000000
 [cvpcb]
 version=1
 NetIExt=net
-[general]
-version=1
 [eeschema]
 version=1
 LibDir=~/kicad_sources/library-repos;../kicad_sources/library-repos/kicad-library/library
 [eeschema/libraries]
 LibName1=hexabot
 LibName2=kicad-library/library/power
+[general]
+version=1
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60

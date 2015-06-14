@@ -1,4 +1,4 @@
-update=jeu. 11 juin 2015 22:21:32 CEST
+update=dim. 14 juin 2015 18:11:53 CEST
 version=1
 last_client=kicad
 [cvpcb]
@@ -27,12 +27,12 @@ LibName4=kicad-library/library/conn
 [pcbnew]
 version=1
 PageLayoutDescrFile=
-LastNetListRead=
-UseCmpFile=1
-PadDrill=0.6
-PadDrillOvalY=0.6
-PadSizeH=1.5
-PadSizeV=1.5
+LastNetListRead=hexabot.net
+UseCmpFile=0
+PadDrill=0
+PadDrillOvalY=0
+PadSizeH=1
+PadSizeV=1
 PcbTextSizeV=1.5
 PcbTextSizeH=1.5
 PcbTextThickness=0.3

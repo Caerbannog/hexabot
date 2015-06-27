@@ -60,7 +60,7 @@ void APP_DeviceCDCBasicDemoInitialize()
     line_coding.bCharFormat = 0;
     line_coding.bDataBits = 8;
     line_coding.bParityType = 0;
-    line_coding.dwDTERate = 9600;
+    line_coding.dwDTERate = 9600; // 115200 works
 
     buttonPressed = false;
 }

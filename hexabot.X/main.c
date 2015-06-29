@@ -94,7 +94,7 @@ MAIN_RETURN main(void)
         }
 
         //Application specific tasks
-        APP_DeviceCDCBasicDemoTasks();
+        APP_Tasks();
 
     }//end while
 }//end main
@@ -128,7 +128,7 @@ bool USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, uint16_t size
         case EVENT_CONFIGURED:
             /* When the device is configured, we can (re)initialize the 
              * demo code. */
-            APP_DeviceCDCBasicDemoInitialize();
+            APP_Initialize();
             break;
 
         case EVENT_SET_DESCRIPTOR:

@@ -33,6 +33,8 @@
 #include <app_device_cdc_basic.h>
 #include <usb_config.h>
 
+#include "usb_commands.h"
+
 /** VARIABLES ******************************************************/
 
 static bool buttonPressed;
@@ -41,8 +43,6 @@ static uint8_t readBuffer[CDC_DATA_OUT_EP_SIZE];
 static uint8_t writeBuffer[CDC_DATA_IN_EP_SIZE];
 
 /*********************************************************************
-* Function: void APP_DeviceCDCBasicDemoInitialize(void);
-*
 * Overview: Initializes the demo code
 *
 * PreCondition: None
@@ -52,11 +52,12 @@ static uint8_t writeBuffer[CDC_DATA_IN_EP_SIZE];
 * Output: None
 *
 ********************************************************************/
-void APP_DeviceCDCBasicDemoInitialize()
+void APP_Initialize()
 {
     CDCInitEP();
+    CommandInitEP();
 
-    
+
     line_coding.bCharFormat = 0;
     line_coding.bDataBits = 8;
     line_coding.bParityType = 0;
@@ -66,12 +67,10 @@ void APP_DeviceCDCBasicDemoInitialize()
 }
 
 /*********************************************************************
-* Function: void APP_DeviceCDCBasicDemoTasks(void);
-*
 * Overview: Keeps the demo running.
 *
 * PreCondition: The demo should have been initialized and started via
-*   the APP_DeviceCDCBasicDemoInitialize() and APP_DeviceCDCBasicDemoStart() demos
+*   the APP_Initialize() and APP_Start() demos
 *   respectively.
 *
 * Input: None
@@ -79,8 +78,13 @@ void APP_DeviceCDCBasicDemoInitialize()
 * Output: None
 *
 ********************************************************************/
-void APP_DeviceCDCBasicDemoTasks()
+void APP_Tasks()
 {
+    static int i = 0;
+    if (i++ == 1) { // Blink LED test
+        LED_Toggle(LED_D1);
+    }
+
     /* If the user has pressed the button associated with this demo, then we
      * are going to send a "Button Pressed" message to the terminal.
      */
@@ -152,4 +156,5 @@ void APP_DeviceCDCBasicDemoTasks()
     }
 
     CDCTxService();
+    CommandInService();
 }

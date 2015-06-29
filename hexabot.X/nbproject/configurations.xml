@@ -11,7 +11,6 @@
         <itemPath>usb/usb_hal.h</itemPath>
         <itemPath>usb/usb_ch9.h</itemPath>
         <itemPath>usb/usb.h</itemPath>
-        <itemPath>usb/usb_device_generic.h</itemPath>
         <itemPath>usb/usb_hal_dspic33e.h</itemPath>
         <itemPath>usb/usb_common.h</itemPath>
       </logicalFolder>
@@ -27,6 +26,7 @@
       <itemPath>system_config.h</itemPath>
       <itemPath>usb_config.h</itemPath>
       <itemPath>usb_hal_local.h</itemPath>
+      <itemPath>usb_commands.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -35,7 +35,6 @@
         <itemPath>usb/src/usb_hal_dspic33e.c</itemPath>
         <itemPath>usb/src/usb_device.c</itemPath>
         <itemPath>usb/src/usb_descriptors.c</itemPath>
-        <itemPath>usb/src/usb_device_generic.c</itemPath>
         <itemPath>usb/src/usb_device_cdc.c</itemPath>
       </logicalFolder>
       <itemPath>app_device_cdc_basic.c</itemPath>
@@ -44,6 +43,7 @@
       <itemPath>leds.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>system.c</itemPath>
+      <itemPath>usb_commands.c</itemPath>
     </logicalFolder>
     <itemPath>Makefile</itemPath>
   </logicalFolder>
@@ -208,6 +208,7 @@
         <property key="ToolFirmwareFilePath"
                   value="Press to browse for a specific firmware version"/>
         <property key="ToolFirmwareOption.UseLatestFirmware" value="true"/>
+        <property key="firmware.download.all" value="false"/>
         <property key="memories.configurationmemory" value="true"/>
         <property key="memories.dataflash" value="true"/>
         <property key="memories.eeprom" value="true"/>

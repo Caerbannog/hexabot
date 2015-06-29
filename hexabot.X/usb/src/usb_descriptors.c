@@ -181,21 +181,24 @@ const USB_DEVICE_DESCRIPTOR device_dsc=
     0x01                    // Number of possible configurations
 };
 
+#define VENDOR_SPECIFIC 0xFF
+
 /* Configuration 1 Descriptor */
 const uint8_t configDescriptor1[]={
     /* Configuration Descriptor */
     0x09,//sizeof(USB_CFG_DSC),    // Size of this descriptor in bytes
-    USB_DESCRIPTOR_CONFIGURATION,                // CONFIGURATION descriptor type
-    67,0,                   // Total length of data for this cfg
-    2,                      // Number of interfaces in this cfg
+    USB_DESCRIPTOR_CONFIGURATION,  // CONFIGURATION descriptor type
+// This size has to be updated manually:
+    97,0,                   // Total length of data for this cfg
+    3,                      // Number of interfaces in this cfg
     1,                      // Index value of this configuration
     0,                      // Configuration string index
-    _DEFAULT | _SELF,               // Attributes, see usb_device.h
+    _DEFAULT | _SELF,       // Attributes, see usb_device.h
     50,                     // Max power consumption (2X mA)
 							
     /* Interface Descriptor */
     9,//sizeof(USB_INTF_DSC),   // Size of this descriptor in bytes
-    USB_DESCRIPTOR_INTERFACE,               // INTERFACE descriptor type
+    USB_DESCRIPTOR_INTERFACE,   // INTERFACE descriptor type
     0,                      // Interface Number
     0,                      // Alternate Setting Number
     1,                      // Number of endpoints in this intf
@@ -231,14 +234,14 @@ const uint8_t configDescriptor1[]={
     //sizeof(USB_EP_DSC),DSC_EP,_EP02_IN,_INT,CDC_INT_EP_SIZE,0x02,
     0x07,/*sizeof(USB_EP_DSC)*/
     USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
-    _EP01_IN,            //EndpointAddress
-    _INTERRUPT,                       //Attributes
+    _EP01_IN,                   //EndpointAddress
+    _INTERRUPT,                 //Attributes
     0x08,0x00,                  //size
     0x02,                       //Interval
 
     /* Interface Descriptor */
     9,//sizeof(USB_INTF_DSC),   // Size of this descriptor in bytes
-    USB_DESCRIPTOR_INTERFACE,               // INTERFACE descriptor type
+    USB_DESCRIPTOR_INTERFACE,   // INTERFACE descriptor type
     1,                      // Interface Number
     0,                      // Alternate Setting Number
     2,                      // Number of endpoints in this intf
@@ -251,8 +254,8 @@ const uint8_t configDescriptor1[]={
     //sizeof(USB_EP_DSC),DSC_EP,_EP03_OUT,_BULK,CDC_BULK_OUT_EP_SIZE,0x00,
     0x07,/*sizeof(USB_EP_DSC)*/
     USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
-    _EP02_OUT,            //EndpointAddress
-    _BULK,                       //Attributes
+    _EP02_OUT,                  //EndpointAddress
+    _BULK,                      //Attributes
     0x40,0x00,                  //size
     0x00,                       //Interval
 
@@ -260,10 +263,46 @@ const uint8_t configDescriptor1[]={
     //sizeof(USB_EP_DSC),DSC_EP,_EP03_IN,_BULK,CDC_BULK_IN_EP_SIZE,0x00
     0x07,/*sizeof(USB_EP_DSC)*/
     USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
-    _EP02_IN,            //EndpointAddress
-    _BULK,                       //Attributes
+    _EP02_IN,                   //EndpointAddress
+    _BULK,                      //Attributes
     0x40,0x00,                  //size
     0x00,                       //Interval
+    
+    
+    /* Interface Descriptor */
+    9,//sizeof(USB_INTF_DSC),   // Size of this descriptor in bytes
+    USB_DESCRIPTOR_INTERFACE,   // INTERFACE descriptor type
+    2,                      // Interface Number
+    0,                      // Alternate Setting Number
+    3,                      // Number of endpoints in this intf
+    VENDOR_SPECIFIC,        // Class code
+    VENDOR_SPECIFIC,        // Subclass code
+    VENDOR_SPECIFIC,        // Protocol code
+    0,                      // Interface string index
+    
+    /* Endpoint Descriptor */
+    0x07,/*sizeof(USB_EP_DSC)*/
+    USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
+    _EP03_OUT,                  //EndpointAddress
+    _BULK,                      //Attributes
+    0x40,0x00,                  //size 64, max for full-speed
+    0x00,
+    
+    /* Endpoint Descriptor */
+    0x07,/*sizeof(USB_EP_DSC)*/
+    USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
+    _EP03_IN,                   //EndpointAddress
+    _BULK,                      //Attributes
+    0x40,0x00,                  //size 64, max for full-speed
+    0x00,
+    
+    /* Endpoint Descriptor */
+    0x07,/*sizeof(USB_EP_DSC)*/
+    USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
+    _EP04_OUT,                  //EndpointAddress
+    _ISO | _NS | _DE,           //Attributes
+    0x40,0x00,                  //size
+    0x01, // 1ms polling
 };
 
 

@@ -29,8 +29,6 @@
 #include <usb/usb_device_cdc.h>
 
 /*********************************************************************
-* Function: void APP_DeviceCDCBasicDemoInitialize(void);
-*
 * Overview: Initializes the demo code
 *
 * PreCondition: None
@@ -40,15 +38,13 @@
 * Output: None
 *
 ********************************************************************/
-void APP_DeviceCDCBasicDemoInitialize();
+void APP_Initialize();
 
 /*********************************************************************
-* Function: void APP_DeviceCDCBasicDemoTasks(void);
-*
 * Overview: Keeps the demo running.
 *
 * PreCondition: The demo should have been initialized and started via
-*   the APP_DeviceCDCBasicDemoInitialize() and APP_DeviceCDCBasicDemoStart() demos
+*   the APP_Initialize() and APP_Start() demos
 *   respectively.
 *
 * Input: None
@@ -56,7 +52,7 @@ void APP_DeviceCDCBasicDemoInitialize();
 * Output: None
 *
 ********************************************************************/
-void APP_DeviceCDCBasicDemoTasks();
+void APP_Tasks();
 
 
 #endif

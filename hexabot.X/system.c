@@ -123,7 +123,9 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             ACLKCON3bits.ENAPLL = 1;
             while(ACLKCON3bits.APLLCK != 1);
 
-            LED_Enable(LED_USB_DEVICE_STATE);
+            LED_Enable(LED_D1);
+            LED_Enable(LED_D2);
+            LED_Enable(LED_D3);
             BUTTON_Enable(BUTTON_DEVICE_CDC_BASIC_DEMO);
             break;
 

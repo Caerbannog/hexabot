@@ -30,7 +30,7 @@
 #include <usb/usb.h>
 
 #include <app_led_usb_status.h>
-#include <app_device_cdc_basic.h>
+#include <app.h>
 #include <usb_config.h>
 
 #include "usb_commands.h"

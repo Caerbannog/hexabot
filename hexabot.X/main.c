@@ -24,7 +24,7 @@
 #include <system.h>
 #include <system_config.h>
 
-#include <app_device_cdc_basic.h>
+#include <app.h>
 #include <app_led_usb_status.h>
 
 #include <usb/usb.h>

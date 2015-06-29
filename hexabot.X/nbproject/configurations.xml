@@ -15,7 +15,6 @@
         <itemPath>usb/usb_common.h</itemPath>
       </logicalFolder>
       <itemPath>adc.h</itemPath>
-      <itemPath>app_device_cdc_basic.h</itemPath>
       <itemPath>app_led_usb_status.h</itemPath>
       <itemPath>buttons.h</itemPath>
       <itemPath>print_ram_buffer.h</itemPath>
@@ -27,6 +26,7 @@
       <itemPath>usb_config.h</itemPath>
       <itemPath>usb_hal_local.h</itemPath>
       <itemPath>usb_commands.h</itemPath>
+      <itemPath>app.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -37,13 +37,13 @@
         <itemPath>usb/src/usb_descriptors.c</itemPath>
         <itemPath>usb/src/usb_device_cdc.c</itemPath>
       </logicalFolder>
-      <itemPath>app_device_cdc_basic.c</itemPath>
       <itemPath>app_led_usb_status.c</itemPath>
       <itemPath>buttons.c</itemPath>
       <itemPath>leds.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>system.c</itemPath>
       <itemPath>usb_commands.c</itemPath>
+      <itemPath>app.c</itemPath>
     </logicalFolder>
     <itemPath>Makefile</itemPath>
   </logicalFolder>

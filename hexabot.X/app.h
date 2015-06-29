@@ -20,8 +20,8 @@
  CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *******************************************************************/
 
-#ifndef APP_DEVICE_CDC_BASIC_H
-#define APP_DEVICE_CDC_BASIC_H
+#ifndef APP_H
+#define APP_H
 
 #include <stdbool.h>
 #include <stddef.h>

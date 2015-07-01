@@ -126,7 +126,9 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             LED_Enable(LED_D1);
             LED_Enable(LED_D2);
             LED_Enable(LED_D3);
-            BUTTON_Enable(BUTTON_DEVICE_CDC_BASIC_DEMO);
+            BUTTON_Enable(BUTTON_S1);
+            BUTTON_Enable(BUTTON_S2);
+            BUTTON_Enable(BUTTON_S3);
             break;
 
         case SYSTEM_STATE_USB_SUSPEND:

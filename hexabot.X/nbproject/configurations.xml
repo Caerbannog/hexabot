@@ -27,6 +27,8 @@
       <itemPath>usb_hal_local.h</itemPath>
       <itemPath>usb_commands.h</itemPath>
       <itemPath>app.h</itemPath>
+      <itemPath>app_debug.h</itemPath>
+      <itemPath>app_registers.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -44,6 +46,8 @@
       <itemPath>system.c</itemPath>
       <itemPath>usb_commands.c</itemPath>
       <itemPath>app.c</itemPath>
+      <itemPath>app_debug.c</itemPath>
+      <itemPath>app_registers.c</itemPath>
     </logicalFolder>
     <itemPath>Makefile</itemPath>
   </logicalFolder>

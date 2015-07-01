@@ -496,7 +496,7 @@ bool USBCDCEventHandler(USB_EVENT event, void *pdata, uint16_t size)
             break;
         default:
             return false;
-    }      
+    }
     return true;
 }
 

@@ -32,6 +32,7 @@
 #include <app_led_usb_status.h>
 #include <app.h>
 #include <usb_config.h>
+#include "app_debug.h"
 
 #include "usb_commands.h"
 
@@ -80,15 +81,28 @@ void APP_Initialize()
 ********************************************************************/
 void APP_Tasks()
 {
-    static int i = 0;
-    if (i++ == 1) { // Blink LED test
-        LED_Toggle(LED_D1);
+    //LED_Toggle(LED_D1);
+    
+    if (BUTTON_IsPressed(BUTTON_S1)) {
+        LOG("PRESSED");
+    }
+    
+    if (BUTTON_IsPressed(BUTTON_S2)) {
+        char * str = "command_in";
+        SendCommand(str, strlen(str) + 1);
+    }
+    
+    char buffer[64];
+    int received = PollCommand(buffer, sizeof(buffer) - 1 /*null*/);
+    if (received > 0) {
+        buffer[received] = '\0';
+        LOG("received %s", buffer);
     }
 
     /* If the user has pressed the button associated with this demo, then we
      * are going to send a "Button Pressed" message to the terminal.
      */
-    if(BUTTON_IsPressed(BUTTON_DEVICE_CDC_BASIC_DEMO) == true)
+    if(BUTTON_IsPressed(BUTTON_S3) == true)
     {
         /* Make sure that we only send the message once per button press and
          * not continuously as the button is held.
@@ -156,5 +170,4 @@ void APP_Tasks()
     }
 
     CDCTxService();
-    CommandInService();
 }

@@ -2,13 +2,15 @@
 #include <system.h>
 #include <usb/usb.h>
 #include "usb_commands.h"
+#include "app_debug.h"
 
+#include "usb/usb_device_cdc.h"
+
+unsigned char command_in_buffer[COMMAND_IN_EP_SIZE];
+uint8_t command_in_buffer_len;
 
 volatile unsigned char command_data_in[COMMAND_IN_EP_SIZE];
 volatile unsigned char command_data_out[COMMAND_OUT_EP_SIZE];
-
-uint8_t command_out_len;            // total rx length
-uint8_t command_in_len;            // total tx length
 
 USB_HANDLE CommandDataOutHandle;
 USB_HANDLE CommandDataInHandle;
@@ -16,7 +18,8 @@ USB_HANDLE CommandDataInHandle;
 
 void CommandInitEP(void)
 {
-    command_out_len = 0;
+    command_in_buffer_len = 0;
+    
     /*
      * Do not have to init Cnt of IN pipes here.
      * Reason:  Number of BYTEs to send to the host
@@ -33,94 +36,83 @@ void CommandInitEP(void)
 
     CommandDataOutHandle = USBRxOnePacket(COMMAND_EP,(uint8_t*)&command_data_out,sizeof(command_data_out));
     CommandDataInHandle = NULL;
+}
 
-    //cdc_trf_state = CDC_TX_READY;
+
+uint8_t PollCommand(char * buffer, uint8_t len)
+{
+    int written = 0;
+    
+    if(!USBHandleBusy(CommandDataOutHandle))
+    {
+# if 0
+        // Debug output
+        putUSBUSART(command_data_out, USBHandleGetLength(CommandDataOutHandle));
+#else
+        /*
+         * Adjust the expected number of BYTEs to equal
+         * the actual number of BYTEs received.
+         */
+        if(len > USBHandleGetLength(CommandDataOutHandle))
+            len = USBHandleGetLength(CommandDataOutHandle);
+        
+        /*
+         * Copy data from dual-ram buffer to user's buffer
+         */
+        for( ; written < len; written++)
+            buffer[written] = command_data_out[written];
+#endif
+        
+        /*
+         * Prepare dual-ram buffer for next OUT transaction
+         */
+
+        CommandDataOutHandle = USBRxOnePacket(COMMAND_EP, (uint8_t*)&command_data_out, sizeof(command_data_out));
+    }
+    
+    return written;
 }
 
 
 bool USBCommandEventHandler(USB_EVENT event, void *pdata, uint16_t size)
 {
-// TODO: what purpose?
-#if 0
-    switch( (uint16_t)event )
-    {
-        case EVENT_TRANSFER_TERMINATED:
-            if(pdata == CDCDataOutHandle)
-            {
-                CDCDataOutHandle = USBRxOnePacket(CDC_DATA_EP,(uint8_t*)&cdc_data_rx,sizeof(cdc_data_rx));
-            }
-            if(pdata == CDCDataInHandle)
-            {
-                //flush all of the data in the CDC buffer
-                cdc_trf_state = CDC_TX_READY;
-                cdc_tx_len = 0;
-            }
-            break;
-        default:
-            return false;
-    }
-#endif
+    // Probably useless.
     return true;
 }
 
 
-void CommandInService(void)
+void SendCommand(char * buffer, uint8_t len)
 {
-    uint8_t byte_to_send;
-    uint8_t i;
-
     USBMaskInterrupts();
-
-    //CDCNotificationHandler();
 
     if(USBHandleBusy(CommandDataInHandle))
     {
         USBUnmaskInterrupts();
+        ERROR("command dropped");
         return;
     }
 
-    // TODO state machine here
-    static long time = 0;
-    if (time < 0) {
-    }
-    else if (time > 10000000) {
-        time = -1;
-        /*
-         * First, have to figure out how many byte of data to send.
-         */
-        if(command_in_len > sizeof(command_data_in))
-            byte_to_send = sizeof(command_data_in);
-        else
-            byte_to_send = command_in_len;
-
-        /*
-         * Subtract the number of bytes just about to be sent from the total.
-         */
-        command_in_len = command_in_len - byte_to_send;
-        
-        
-        char * str = "helloworld\n";
-        i = byte_to_send;
-        while(i)
-        {
-            command_data_in[i] = str[i];
-            i--;
-        }
-
-        /*
-         * Lastly, determine if a zero length packet state is necessary.
-         * See explanation in USB Specification 2.0: Section 5.8.3
-         */
-        if(command_in_len == 0)
-        {
-            if(byte_to_send == CDC_DATA_IN_EP_SIZE)
-                ;
-            else
-                ;
-        }
-        CommandDataInHandle = USBTxOnePacket(COMMAND_EP, (uint8_t*)&command_data_in, byte_to_send);
+    if (len == 0) {
+        USBUnmaskInterrupts();
+        WARN("command empty");
+        return;
     }
     
+    LED_Toggle(LED_D2); // TODO: consistent activity LED
+
+    if(len > sizeof(command_data_in)) {
+        len = sizeof(command_data_in);
+    }
+
+    int i;
+    for (i = 0; i < len; i++) {
+        command_data_in[i] = buffer[i];
+    }
+
+    // Note: there might be a need for a zero length packet state for full buffers.
+    // See explanation in USB Specification 2.0: Section 5.8.3
+    
+    CommandDataInHandle = USBTxOnePacket(COMMAND_EP, (uint8_t*)&command_data_in, len);
     
     USBUnmaskInterrupts();
 }

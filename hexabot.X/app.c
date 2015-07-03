@@ -89,14 +89,16 @@ void APP_Tasks()
     
     if (BUTTON_IsPressed(BUTTON_S2)) {
         char * str = "command_in";
-        SendCommand(str, strlen(str) + 1);
+        CommandInSend((uint8_t *)str, strlen(str));
     }
     
-    char buffer[64];
-    int received = PollCommand(buffer, sizeof(buffer) - 1 /*null*/);
+    uint8_t buffer[CDC_DATA_OUT_EP_SIZE];
+    uint8_t received = CommandOutPoll(buffer, sizeof(buffer));
     if (received > 0) {
-        buffer[received] = '\0';
-        LOG("received %s", buffer);
+        //LOG("received=%d", received);
+        //putUSBUSART(buffer, received);
+        //CommandInSend(buffer, received);
+        
     }
 
     /* If the user has pressed the button associated with this demo, then we

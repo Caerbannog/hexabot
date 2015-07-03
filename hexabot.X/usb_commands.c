@@ -6,11 +6,8 @@
 
 #include "usb/usb_device_cdc.h"
 
-unsigned char command_in_buffer[COMMAND_IN_EP_SIZE];
-uint8_t command_in_buffer_len;
-
-volatile unsigned char command_data_in[COMMAND_IN_EP_SIZE];
-volatile unsigned char command_data_out[COMMAND_OUT_EP_SIZE];
+volatile uint8_t command_data_in[COMMAND_IN_EP_SIZE];
+volatile uint8_t command_data_out[COMMAND_OUT_EP_SIZE];
 
 USB_HANDLE CommandDataOutHandle;
 USB_HANDLE CommandDataInHandle;
@@ -18,20 +15,6 @@ USB_HANDLE CommandDataInHandle;
 
 void CommandInitEP(void)
 {
-    command_in_buffer_len = 0;
-    
-    /*
-     * Do not have to init Cnt of IN pipes here.
-     * Reason:  Number of BYTEs to send to the host
-     *          varies from one transaction to
-     *          another. Cnt should equal the exact
-     *          number of BYTEs to transmit for
-     *          a given IN transaction.
-     *          This number of BYTEs will only
-     *          be known right before the data is
-     *          sent.
-     */
-    
     USBEnableEndpoint(COMMAND_EP, USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP /*TODO*/);
 
     CommandDataOutHandle = USBRxOnePacket(COMMAND_EP,(uint8_t*)&command_data_out,sizeof(command_data_out));
@@ -39,49 +22,49 @@ void CommandInitEP(void)
 }
 
 
-uint8_t PollCommand(char * buffer, uint8_t len)
+uint8_t CommandOutPoll(uint8_t * buffer, uint8_t max_len)
 {
-    int written = 0;
-    
-    if(!USBHandleBusy(CommandDataOutHandle))
-    {
-# if 0
-        // Debug output
-        putUSBUSART(command_data_out, USBHandleGetLength(CommandDataOutHandle));
-#else
-        /*
-         * Adjust the expected number of BYTEs to equal
-         * the actual number of BYTEs received.
-         */
-        if(len > USBHandleGetLength(CommandDataOutHandle))
-            len = USBHandleGetLength(CommandDataOutHandle);
-        
-        /*
-         * Copy data from dual-ram buffer to user's buffer
-         */
-        for( ; written < len; written++)
-            buffer[written] = command_data_out[written];
-#endif
-        
-        /*
-         * Prepare dual-ram buffer for next OUT transaction
-         */
-
-        CommandDataOutHandle = USBRxOnePacket(COMMAND_EP, (uint8_t*)&command_data_out, sizeof(command_data_out));
+    if(USBHandleBusy(CommandDataOutHandle)) {
+        return 0;
     }
     
-    return written;
+    int received = USBHandleGetLength(CommandDataOutHandle);
+    uint8_t len = command_data_out[0];
+    if(received > max_len + 1 /*+2 if we didn't copy the null byte*/) {
+        ERROR("received=%d more than max_len=%d", received, max_len);
+        received = 0;
+    }
+    else if (len + 2 != received) {
+        ERROR("len=%d but received=%d", len, received);
+        received = 0;
+    }
+    else if (command_data_out[received] != 0) {
+        ERROR("no end of packet for len=%d", len);
+        received = 0;
+    }
+    else {
+        // Copy data from dual-ram buffer to user's buffer
+        uint8_t i;
+        for(i = 0; i < len + 1; i++) { // Include the terminating null byte.
+            buffer[i] = command_data_out[i + 1];
+        }
+    }
+
+    // Prepare dual-ram buffer for next OUT transaction
+    CommandDataOutHandle = USBRxOnePacket(COMMAND_EP, (uint8_t*)&command_data_out, sizeof(command_data_out));
+
+    return len;
 }
 
 
-bool USBCommandEventHandler(USB_EVENT event, void *pdata, uint16_t size)
+bool CommandEventHandler(USB_EVENT event, void *pdata, uint16_t size)
 {
     // Probably useless.
     return true;
 }
 
 
-void SendCommand(char * buffer, uint8_t len)
+void CommandInSend(uint8_t * buffer, uint8_t len)
 {
     USBMaskInterrupts();
 
@@ -94,25 +77,29 @@ void SendCommand(char * buffer, uint8_t len)
 
     if (len == 0) {
         USBUnmaskInterrupts();
-        WARN("command empty");
+        ERROR("empty command");
         return;
     }
     
     LED_Toggle(LED_D2); // TODO: consistent activity LED
 
-    if(len > sizeof(command_data_in)) {
-        len = sizeof(command_data_in);
+    if(len + 2 > sizeof(command_data_in)) {
+        USBUnmaskInterrupts();
+        ERROR("command too long");
+        return;
     }
 
-    int i;
+    uint8_t i;
+    command_data_in[0] = len; // Header
     for (i = 0; i < len; i++) {
-        command_data_in[i] = buffer[i];
+        command_data_in[i + 1] = buffer[i];
     }
+    command_data_in[len + 1] = '\0';
 
     // Note: there might be a need for a zero length packet state for full buffers.
     // See explanation in USB Specification 2.0: Section 5.8.3
     
-    CommandDataInHandle = USBTxOnePacket(COMMAND_EP, (uint8_t*)&command_data_in, len);
+    CommandDataInHandle = USBTxOnePacket(COMMAND_EP, (uint8_t*)&command_data_in, len + 2);
     
     USBUnmaskInterrupts();
 }

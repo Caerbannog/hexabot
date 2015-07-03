@@ -145,7 +145,7 @@ bool USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, uint16_t size
 
         case EVENT_TRANSFER_TERMINATED:
             USBCDCEventHandler(event, pdata, size); // Useless?
-            //USBCommandEventHandler(event, pdata, size);
+            //CommandEventHandler(event, pdata, size);
             break;
 
         default:

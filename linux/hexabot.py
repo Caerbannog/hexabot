@@ -22,6 +22,7 @@ METRICS_OUT_EP = 5
 
 COMMAND_OUT_SIZE = 64
 COMMAND_IN_SIZE = 64 # FIXME: smaller size in read() calls for non blocking?
+METRICS_OUT_SIZE = 64
 
 COMMAND_TIMEOUT = 1000
 
@@ -42,8 +43,11 @@ class controller:
             usb.util.claim_interface(self.dev, interface)
     
     
-    def send(self, cmd):
+    def send_command(self, cmd):
+        """Command format: length of payload (1 byte), payload (n bytes), null (1 byte)
+           Command payload: """
         cmd = [len(cmd)] + cmd + [0] # Add len header and terminating null byte
+        
         if len(cmd) >= COMMAND_OUT_SIZE:
             raise Exception('Command too long %s' % cmd)
         written = self.dev.write(COMMAND_OUT_EP, cmd,
@@ -53,21 +57,17 @@ class controller:
             raise Exception('Wrote %d bytes instead of %d' % (written, len(cmd)))
     
     
-    def command_read(length, timeout):
-        return self.dev.read(COMMAND_IN_EP, length,
-                             interface=COMMAND_INTERFACE, timeout=timeout)
-    
-    
-    def receive(self):
-        length = self.command_read(1, COMMAND_TIMEOUT) # header
-        if length >= COMMAND_IN_SIZE:
-            raise Exception('Answer too long %d' % length)
-        answer = self.command_read(length + 1, 0) # blocking
+    def receive_command(self):
+        answer = self.dev.read(COMMAND_IN_EP, COMMAND_IN_SIZE, interface=COMMAND_INTERFACE,
+                               timeout=COMMAND_TIMEOUT) # Header
+        
+        if answer[0] + 2 != len(answer):
+            raise Exception('Unexpected header=%d for answer len=%d' % (answer[0], len(answer)))
         
         if answer[-1] != 0:
             raise Exception('Wrong end of packet %d' % answer[-1])
         
-        return s[:-1].tostring() # convert payload from array
+        return answer[1:-1].tostring() # Convert payload from array
     
     
     def try_receive(self):
@@ -82,6 +82,6 @@ class controller:
     
     def dump_metrics(self):
         while True:
-            s = self.dev.read(COMMAND_IN_EP, COMMAND_IN_SIZE,
+            s = self.dev.read(METRICS_OUT_EP, METRICS_OUT_SIZE,
                               interface=METRICS_INTERFACE, timeout=0).tostring()
             print(s.decode('utf-8'))

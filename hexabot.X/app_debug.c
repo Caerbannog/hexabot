@@ -7,6 +7,8 @@
 
 static char buffer[64];
 
+// TODO: bufferiser pour pouvoir envoyer des logs plus souvent !!!
+
 void debug_log(const char * file, int line, const char * format, ...)
 {
     const int buffer_size = sizeof(buffer);

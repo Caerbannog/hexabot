@@ -5,11 +5,11 @@
 #include <stdint.h>
 
 typedef struct {
-    uint8_t * addr;
-    uint8_t size;
+    const uint8_t * addr;
+    const uint8_t size;
 } register_t;
 
-extern register_t registers[];
+extern const register_t registers[];
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
 

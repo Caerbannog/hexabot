@@ -1,0 +1,7 @@
+# UDEV rules for Hexabot, to be copied to /etc/udev/rules.d/
+
+# Allow members of the wireshark group to monitor USB
+SUBSYSTEM=="usbmon", GROUP="wireshark", MODE="640"
+
+# Tell ModemManager to ignore /dev/ttyACM* matching the Microchip Vendor ID
+ATTRS{idVendor}=="04d8", ENV{ID_MM_DEVICE_IGNORE}="1"

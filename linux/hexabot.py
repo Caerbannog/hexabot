@@ -18,11 +18,11 @@ METRICS_INTERFACE = 3
 COMMAND_OUT_EP = 3
 COMMAND_IN_EP = 3 + 0x80
 ISOCHRONOUS_OUT_EP = 4
-METRICS_OUT_EP = 5
+METRICS_IN_EP = 5 + 0x80
 
 COMMAND_OUT_SIZE = 64
 COMMAND_IN_SIZE  = 64
-METRICS_OUT_SIZE = 64
+METRICS_IN_SIZE  = 64
 
 COMMAND_TIMEOUT = 1000
 
@@ -88,12 +88,13 @@ class controller:
         last_datatime = -1
         
         with open('metrics.txt', 'a') as file_out:
-            try:
-                while True:
-                    raw_metrics = self.dev.read(METRICS_OUT_EP, METRICS_OUT_SIZE,
-                                                interface=METRICS_INTERFACE, timeout=0).tostring() # FIXME: work on array to skip tostring()
+            while True:
+                try:
+                    raw_metrics = self.dev.read(METRICS_IN_EP, METRICS_IN_SIZE,
+                                                interface=METRICS_INTERFACE,
+                                                timeout=500) # Timeout to respond to KeyboardInterrupt
                     
-                    if len(raw_metrics) % fmt.calcsize(METRICS_FORMAT) != 0:
+                    if len(raw_metrics) % fmt.size != 0:
                         raise Exception('Unaligned metrics size %d' % len(raw_metrics))
                     
                     for (m_id, m_datatime, m_value) in fmt.iter_unpack(raw_metrics):
@@ -107,8 +108,13 @@ class controller:
                             #~ last_datatime = m_datatime
                             # TODO: if last_realtime < time.time() + ticker_max_delay: we lost track of time
                         
-                        line = "%d %f %f\n" % (m_id, last_realtime, m_value)
+                        line = "%d %f %.2f" % (m_id, last_realtime, m_value)
                         print(line)
-                        file_out.write(line)
-            except KeyboardInterrupt:
-                pass
+                        file_out.write(line + "\n")
+                except KeyboardInterrupt:
+                    return
+                except usb.core.USBError as e:
+                    if e.args == (110, 'Operation timed out'):
+                        continue
+                    else:
+                        raise

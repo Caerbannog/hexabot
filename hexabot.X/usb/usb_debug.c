@@ -15,38 +15,64 @@
 
 #include "usb_debug.h"
 #include "usb/usb_device_cdc.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <stdarg.h>
 
 
-static char buffer[64];
+// Ping-pong buffers to handle short bursts. Ping-pong is not enabled at the lower USB layer.
+static volatile uint8_t buffer_1[DEBUG_BUFFER_SIZE];
+static volatile uint8_t buffer_2[DEBUG_BUFFER_SIZE];
 
-// TODO: bufferiser pour pouvoir envoyer des logs plus souvent !!!
+static volatile uint8_t * current_buffer;
+static uint8_t current_buffer_len;
 
-void debug_log(const char * file, int line, const char * format, ...)
+
+void DebugInit(void)
 {
-    const int buffer_size = sizeof(buffer);
-    int offset = 0;
+    current_buffer = buffer_1;
+    current_buffer_len = 0;
+}
+
+
+void DebugLog(const char * file, int line, const char * format, ...)
+{
+    const uint8_t buffer_size = DEBUG_BUFFER_SIZE;
     
-    offset += snprintf(buffer, buffer_size, "%s:%d ", file, line);
-    if (offset > buffer_size) {
-        offset = buffer_size;
+    current_buffer_len +=  snprintf((char *)current_buffer + current_buffer_len, buffer_size - current_buffer_len, "%s:%d ", file, line);
+    if (current_buffer_len >= buffer_size) {
+        current_buffer_len = buffer_size;
+        return;
     }
     
     va_list args;
     va_start(args, format);
-    offset += vsnprintf(buffer + offset, buffer_size - offset, format, args); // FIXME check negative return
+    current_buffer_len += vsnprintf((char *)current_buffer + current_buffer_len, buffer_size - current_buffer_len, format, args); // FIXME check negative return
     va_end(args);
-    if (offset > buffer_size) {
-        offset = buffer_size;
+    if (current_buffer_len >= buffer_size) {
+        current_buffer_len = buffer_size;
+        return;
     }
     
-    offset += snprintf(buffer + offset, buffer_size - offset, "\r\n");
-    if (offset > buffer_size) {
-        offset = buffer_size;
+    current_buffer_len +=  snprintf((char *)current_buffer + current_buffer_len, buffer_size - current_buffer_len, "\r\n");
+    if (current_buffer_len >= buffer_size) {
+        current_buffer_len = buffer_size;
+        return;
     }
-    
-    if(USBUSARTIsTxTrfReady()) {
-        putUSBUSART((uint8_t *)buffer, offset + 1 /*null char*/);
+}
+
+
+void DebugService(void)
+{
+    if(USBUSARTIsTxTrfReady() && current_buffer_len) {
+        putUSBUSART((uint8_t *)current_buffer, current_buffer_len);
+        
+        if (current_buffer == buffer_1) {
+            current_buffer = buffer_2;
+        }
+        else {
+            current_buffer = buffer_1;
+        }
+        current_buffer_len = 0;
     }
 }

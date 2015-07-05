@@ -159,7 +159,6 @@
 #define USB_USE_CDC
 
 /** ENDPOINTS ALLOCATION *******************************************/
-#define USB_MAX_EP_NUMBER	    4
 
 /* CDC */
 #define CDC_COMM_INTF_ID        0x0
@@ -181,6 +180,7 @@
 #define METRICS_EP              5
 #define METRICS_IN_EP_SIZE      64
 
+#define USB_MAX_EP_NUMBER	    5
 
 
 //#define USB_CDC_SUPPORT_ABSTRACT_CONTROL_MANAGEMENT_CAPABILITIES_D2 //Send_Break command

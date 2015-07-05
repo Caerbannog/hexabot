@@ -320,7 +320,7 @@ const uint8_t configDescriptor1[]={
     /* Endpoint Descriptor */
     7,/*sizeof(USB_EP_DSC)*/
     USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
-    _EP05_OUT,                  //EndpointAddress
+    _EP05_IN,                  //EndpointAddress
     _BULK,                      //Attributes
     0x40,0x00,                  //size 64, max for full-speed
     0x00

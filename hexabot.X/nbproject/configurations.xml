@@ -12,7 +12,6 @@
         <itemPath>usb/usb.h</itemPath>
         <itemPath>usb/usb_hal_dspic33e.h</itemPath>
         <itemPath>usb/usb_common.h</itemPath>
-        <itemPath>usb_commands.h</itemPath>
         <itemPath>usb/usb_metrics.h</itemPath>
         <itemPath>usb/usb_commands.h</itemPath>
         <itemPath>usb/usb_config.h</itemPath>

@@ -47,12 +47,10 @@ static uint8_t writeBuffer[CDC_DATA_IN_EP_SIZE];
 ********************************************************************/
 void APP_Initialize()
 {
+    DebugInit();
     CDCInitEP();
     CommandInitEP();
     MetricsInitEP();
-
-
-
 }
 
 /*********************************************************************
@@ -70,7 +68,12 @@ void APP_Initialize()
 void APP_Tasks()
 {
     if (BUTTON_IsPressed(BUTTON_S1)) {
-        LOG("PRESSED S1");
+        //LOG("PRESSED S1");
+        static int i = 0;
+        i++;
+        if (i % 100 == 0) {
+            MetricsAppend(METRIC_DEBUG_1, i);
+        }
     }
     
     if (BUTTON_IsPressed(BUTTON_S2)) {
@@ -129,6 +132,7 @@ void APP_Tasks()
         }
     }
 
+    DebugService();
     CDCService();
     CommandService();
     MetricsService();

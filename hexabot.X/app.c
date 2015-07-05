@@ -18,6 +18,7 @@
 #include "app_led_usb_status.h"
 #include <usb/usb_commands.h>
 #include <usb/usb_metrics.h>
+#include <usb/usb_isochronous.h>
 #include <usb/usb_debug.h>
 #include <usb/usb_config.h>
 #include <usb/usb.h>
@@ -51,6 +52,7 @@ void APP_Initialize()
     CDCInitEP();
     CommandInitEP();
     MetricsInitEP();
+    IsochronousInitEP();
 }
 
 /*********************************************************************

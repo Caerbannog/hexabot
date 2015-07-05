@@ -31,7 +31,7 @@ static USB_HANDLE handle_in;
  */
 void CommandInitEP(void)
 {
-    USBEnableEndpoint(COMMAND_EP, USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
+    USBEnableEndpoint(COMMAND_EP, USB_IN_ENABLED | USB_OUT_ENABLED | USB_HANDSHAKE_ENABLED | USB_DISALLOW_SETUP);
 
     handle_out = USBRxOnePacket(COMMAND_EP,(uint8_t*)&buffer_out,sizeof(buffer_out));
     handle_in = NULL;
@@ -67,7 +67,7 @@ uint8_t CommandOutPoll(uint8_t * buffer, uint8_t max_len)
     }
 
     // Prepare dual-ram buffer for next OUT transaction
-    handle_out = USBRxOnePacket(COMMAND_EP, (uint8_t*)&buffer_out, sizeof(buffer_out));
+    handle_out = USBRxOnePacket(COMMAND_EP, (uint8_t*)&buffer_out, sizeof(buffer_out) /*TODO accurate size*/);
 
     return len;
 }

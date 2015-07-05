@@ -174,9 +174,11 @@
 #define COMMAND_EP              3
 #define COMMAND_OUT_EP_SIZE     64
 #define COMMAND_IN_EP_SIZE      64
-#define ISOCHRONOUS_EP          4
 
 /* Interface 3 */
+#define ISOCHRONOUS_EP          4
+
+/* Interface 4 */
 #define METRICS_EP              5
 #define METRICS_IN_EP_SIZE      64
 

@@ -190,8 +190,8 @@ const uint8_t configDescriptor1[]={
     0x09,//sizeof(USB_CFG_DSC),    // Size of this descriptor in bytes
     USB_DESCRIPTOR_CONFIGURATION,  // CONFIGURATION descriptor type
 // This size has to be updated manually:
-    113,0,                   // Total length of data for this cfg
-    4,                      // Number of interfaces in this cfg
+    122,0,                   // Total length of data for this cfg
+    5,                      // Number of interfaces in this cfg
     1,                      // Index value of this configuration
     0,                      // Configuration string index
     _DEFAULT | _SELF,       // Attributes, see usb_device.h
@@ -275,12 +275,11 @@ const uint8_t configDescriptor1[]={
     USB_DESCRIPTOR_INTERFACE,   // INTERFACE descriptor type
     2,                      // Interface Number
     0,                      // Alternate Setting Number
-    3,                      // Number of endpoints in this intf
+    2,                      // Number of endpoints in this intf
     VENDOR_SPECIFIC,        // Class code
     VENDOR_SPECIFIC,        // Subclass code
     VENDOR_SPECIFIC,        // Protocol code
     0,                      // Interface string index
-    
     /* Endpoint Descriptor */
     0x07,/*sizeof(USB_EP_DSC)*/
     USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
@@ -288,7 +287,6 @@ const uint8_t configDescriptor1[]={
     _BULK,                      //Attributes
     0x40,0x00,                  //size 64, max for full-speed
     0x00,
-    
     /* Endpoint Descriptor */
     7,/*sizeof(USB_EP_DSC)*/
     USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
@@ -296,14 +294,6 @@ const uint8_t configDescriptor1[]={
     _BULK,                      //Attributes
     0x40,0x00,                  //size 64, max for full-speed
     0x00,
-    
-    /* Endpoint Descriptor */
-    7,/*sizeof(USB_EP_DSC)*/
-    USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
-    _EP04_OUT,                  //EndpointAddress
-    _ISO | _NS | _DE,           //Attributes
-    0x40,0x00,                  //size
-    0x01, // 1ms polling
     
     
     /* Interface Descriptor */
@@ -316,7 +306,25 @@ const uint8_t configDescriptor1[]={
     VENDOR_SPECIFIC,        // Subclass code
     VENDOR_SPECIFIC,        // Protocol code
     0,
+    /* Endpoint Descriptor */
+    7,/*sizeof(USB_EP_DSC)*/
+    USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor
+    _EP04_IN,                  //EndpointAddress
+    _ISO | _NS | _DE,           //Attributes
+    0x40,0x00,                  //size
+    0x01, // 1ms polling
     
+    
+    /* Interface Descriptor */
+    9,//sizeof(USB_INTF_DSC),   // Size of this descriptor in bytes
+    USB_DESCRIPTOR_INTERFACE,   // INTERFACE descriptor type
+    4,                      // Interface Number
+    0,                      // Alternate Setting Number
+    1,                      // Number of endpoints in this intf
+    VENDOR_SPECIFIC,        // Class code
+    VENDOR_SPECIFIC,        // Subclass code
+    VENDOR_SPECIFIC,        // Protocol code
+    0,
     /* Endpoint Descriptor */
     7,/*sizeof(USB_EP_DSC)*/
     USB_DESCRIPTOR_ENDPOINT,    //Endpoint Descriptor

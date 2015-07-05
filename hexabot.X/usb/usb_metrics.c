@@ -34,7 +34,7 @@ static USB_HANDLE handle_in;
  */
 void MetricsInitEP(void)
 {
-    USBEnableEndpoint(METRICS_EP, USB_OUT_DISABLED|USB_IN_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
+    USBEnableEndpoint(METRICS_EP, USB_OUT_DISABLED | USB_IN_ENABLED | USB_HANDSHAKE_ENABLED | USB_DISALLOW_SETUP);
 
     current_buffer = buffer_1;
     current_buffer_len = 0;

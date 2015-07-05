@@ -18,6 +18,7 @@
         <itemPath>usb/usb_device_local.h</itemPath>
         <itemPath>usb/usb_hal_local.h</itemPath>
         <itemPath>usb/usb_debug.h</itemPath>
+        <itemPath>usb/usb_isochronous.h</itemPath>
       </logicalFolder>
       <itemPath>app_led_usb_status.h</itemPath>
       <itemPath>buttons.h</itemPath>
@@ -39,6 +40,7 @@
         <itemPath>usb/usb_commands.c</itemPath>
         <itemPath>usb/usb_device_cdc.c</itemPath>
         <itemPath>usb/usb_debug.c</itemPath>
+        <itemPath>usb/usb_isochronous.c</itemPath>
       </logicalFolder>
       <itemPath>app_led_usb_status.c</itemPath>
       <itemPath>buttons.c</itemPath>

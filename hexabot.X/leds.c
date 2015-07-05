@@ -20,8 +20,8 @@
  CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *******************************************************************/
 
-#include <xc.h>
 #include "leds.h"
+#include <xc.h>
 #include <stdbool.h>
 
 #define LED_D1_LAT      LATDbits.LATD0

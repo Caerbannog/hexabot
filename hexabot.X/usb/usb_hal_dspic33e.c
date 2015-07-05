@@ -88,7 +88,7 @@ Description:
 #ifndef USB_HAL_DSPIC33E_C
 #define USB_HAL_DSPIC33E_C
 
-#include "usb/usb.h"
+#include <usb/usb.h>
 
 
 /********************************************************************

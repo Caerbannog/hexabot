@@ -13,7 +13,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "app_debug.h"
+#include "usb_debug.h"
 #include "usb/usb_device_cdc.h"
 #include <stdio.h>
 #include <stdarg.h>

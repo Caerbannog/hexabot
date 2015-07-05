@@ -14,9 +14,9 @@
  */
 
 #include "usb_metrics.h"
-#include "app_debug.h"
-#include <system.h>
+#include <usb/usb_debug.h>
 #include <usb/usb.h>
+#include <system.h>
 
 
 // Ping-pong buffers to handle short bursts. Ping-pong is not enabled at the lower USB layer.
@@ -42,18 +42,10 @@ void MetricsInitEP(void)
 }
 
 
-void MetricsAppend(metric_id_t id, float value)
-{
-    metric_t metric = { id, value };
-    // TODO time
-    MetricsAppendRaw((uint8_t *)&metric, sizeof(metric));
-}
-
-
 /*
  * Append a value to the buffer so that the service can send it as soon as possible.
  */
-void MetricsAppendRaw(uint8_t * buffer, uint8_t len)
+static void MetricsAppendRaw(uint8_t * buffer, uint8_t len)
 {
     if (current_buffer_len + len > METRICS_IN_EP_SIZE) { // Buffer full.
         ERROR("metrics dropped %d bytes", len);
@@ -62,6 +54,14 @@ void MetricsAppendRaw(uint8_t * buffer, uint8_t len)
     
     memcpy((uint8_t *)current_buffer + current_buffer_len, buffer, len);
     current_buffer_len += len;
+}
+
+
+void MetricsAppend(metric_id_t id, float value)
+{
+    uint16_t time = 0; // TODO
+    metric_t metric = { id, time, value };
+    MetricsAppendRaw((uint8_t *)&metric, sizeof(metric));
 }
 
 

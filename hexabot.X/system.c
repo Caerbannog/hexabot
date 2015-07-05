@@ -20,13 +20,13 @@
  CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *******************************************************************/
 
-#include <p33EP512MU810.h>
 #include <system.h>
 #include <system_config.h>
 #include <usb/usb.h>
 #include <leds.h>
 #include <buttons.h>
 #include <adc.h>
+#include <xc.h>
 
 /** CONFIGURATION Bits **********************************************/
 // FGS

@@ -14,9 +14,9 @@
  */
 
 #include "usb_commands.h"
-#include "app_debug.h"
-#include <system.h>
+#include <usb/usb_debug.h>
 #include <usb/usb.h>
+#include <system.h>
 
 
 static volatile uint8_t buffer_in[COMMAND_IN_EP_SIZE];

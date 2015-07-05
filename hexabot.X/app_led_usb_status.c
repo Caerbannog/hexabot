@@ -47,9 +47,9 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
-#include <stdint.h>
-#include "system.h"
+#include <system.h>
 #include <usb/usb_device.h>
+#include <stdint.h>
 
 
 // *****************************************************************************

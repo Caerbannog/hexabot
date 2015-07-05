@@ -14,15 +14,14 @@
  */
 
 /** INCLUDES *******************************************************/
-#include "usb/usb_commands.h"
-#include "usb/usb_metrics.h"
-#include "app_led_usb_status.h"
 #include "app.h"
-#include "usb/usb_config.h"
-#include "app_debug.h"
-
-#include "system.h"
-#include "usb/usb.h"
+#include "app_led_usb_status.h"
+#include <usb/usb_commands.h>
+#include <usb/usb_metrics.h>
+#include <usb/usb_debug.h>
+#include <usb/usb_config.h>
+#include <usb/usb.h>
+#include <system.h>
 
 #include <stdint.h>
 #include <string.h>

@@ -13,9 +13,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include <p33EP512MU810.h>
-
 #include "app_registers.h"
+#include <xc.h>
+
 
 uint16_t vbat = 0;
 float Kp = 0;

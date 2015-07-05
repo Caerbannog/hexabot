@@ -47,16 +47,16 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 // Section: Included Files
 // *****************************************************************************
 // *****************************************************************************
-#include <stdint.h>
-#include <stddef.h>
-
-#include "system.h"
-#include "system_config.h"
+#include <system.h>
+#include <system_config.h>
 
 #include <usb/usb.h>
 #include <usb/usb_ch9.h>
 #include <usb/usb_device.h>
 #include <usb/usb_device_local.h>
+
+#include <stdint.h>
+#include <stddef.h>
 
 #if defined(USB_USE_MSD)
     #include "usb/usb_device_msd.h"

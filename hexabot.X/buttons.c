@@ -20,9 +20,9 @@
  CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  *******************************************************************/
 
-#include <p33EP512MU810.h>
-#include <stdbool.h>
 #include "buttons.h"
+#include <xc.h>
+#include <stdbool.h>
 
 /*** Button Definitions *********************************************/
 #define S1_PORT  PORTDbits.RD6

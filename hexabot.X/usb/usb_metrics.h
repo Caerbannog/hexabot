@@ -45,7 +45,6 @@ typedef struct __attribute__ ((__packed__)) {
 
 void MetricsInitEP(void);
 void MetricsAppend(metric_id_t id, float value);
-void MetricsAppendRaw(uint8_t * buffer, uint8_t len);
 void MetricsService(void);
 
 

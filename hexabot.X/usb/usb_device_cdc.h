@@ -786,7 +786,7 @@ void putrsUSBUSART(const const char *data);
 
 /************************************************************************
   Function:
-        void CDCTxService(void)
+        void CDCService(void)
     
   Summary:
     CDCTxService handles device-to-host transaction(s). This function
@@ -834,7 +834,7 @@ void putrsUSBUSART(const const char *data);
   Remarks:
     None                                                                 
   ************************************************************************/
-void CDCTxService(void);
+void CDCService(void);
 
 
 /** S T R U C T U R E S ******************************************************/

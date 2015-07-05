@@ -31,7 +31,6 @@
 #include "leds.h"
 
 #include "io_mapping.h"
-#include "power.h"
 
 #define MAIN_RETURN int
 

@@ -1,45 +1,38 @@
-/********************************************************************
- Software License Agreement:
+/*
+  This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
- The software supplied herewith by Microchip Technology Incorporated
- (the "Company") for its PIC(R) Microcontroller is intended and
- supplied to you, the Company's customer, for use solely and
- exclusively on Microchip PIC Microcontroller products. The
- software is owned by the Company and/or its supplier, and is
- protected under applicable copyright laws. All rights are reserved.
- Any use in violation of the foregoing restrictions may subject the
- user to criminal sanctions under applicable laws, as well as to
- civil liability for the breach of the terms and conditions of this
- license.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
- THIS SOFTWARE IS PROVIDED IN AN "AS IS" CONDITION. NO WARRANTIES,
- WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED
- TO, IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A
- PARTICULAR PURPOSE APPLY TO THIS SOFTWARE. THE COMPANY SHALL NOT,
- IN ANY CIRCUMSTANCES, BE LIABLE FOR SPECIAL, INCIDENTAL OR
- CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
- *******************************************************************/
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 /** INCLUDES *******************************************************/
-#include <system.h>
+#include "usb/usb_commands.h"
+#include "usb/usb_metrics.h"
+#include "app_led_usb_status.h"
+#include "app.h"
+#include "usb/usb_config.h"
+#include "app_debug.h"
+
+#include "system.h"
+#include "usb/usb.h"
 
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
 
-#include <usb/usb.h>
 
-#include <app_led_usb_status.h>
-#include <app.h>
-#include <usb_config.h>
-#include "app_debug.h"
 
-#include "usb_commands.h"
 
 /** VARIABLES ******************************************************/
 
-static bool buttonPressed;
-static char buttonMessage[] = "Button pressed.\r\n";
 static uint8_t readBuffer[CDC_DATA_OUT_EP_SIZE];
 static uint8_t writeBuffer[CDC_DATA_IN_EP_SIZE];
 
@@ -57,14 +50,10 @@ void APP_Initialize()
 {
     CDCInitEP();
     CommandInitEP();
+    MetricsInitEP();
 
 
-    line_coding.bCharFormat = 0;
-    line_coding.bDataBits = 8;
-    line_coding.bParityType = 0;
-    line_coding.dwDTERate = 9600; // 115200 works
 
-    buttonPressed = false;
 }
 
 /*********************************************************************
@@ -81,14 +70,12 @@ void APP_Initialize()
 ********************************************************************/
 void APP_Tasks()
 {
-    //LED_Toggle(LED_D1);
-    
     if (BUTTON_IsPressed(BUTTON_S1)) {
-        LOG("PRESSED");
+        LOG("PRESSED S1");
     }
     
     if (BUTTON_IsPressed(BUTTON_S2)) {
-        char * str = "command_in";
+        char * str = "COMMAND_IN";
         CommandInSend((uint8_t *)str, strlen(str));
     }
     
@@ -97,35 +84,7 @@ void APP_Tasks()
     if (received > 0) {
         //LOG("received=%d", received);
         //putUSBUSART(buffer, received);
-        //CommandInSend(buffer, received);
-        
-    }
-
-    /* If the user has pressed the button associated with this demo, then we
-     * are going to send a "Button Pressed" message to the terminal.
-     */
-    if(BUTTON_IsPressed(BUTTON_S3) == true)
-    {
-        /* Make sure that we only send the message once per button press and
-         * not continuously as the button is held.
-         */
-        if(buttonPressed == false)
-        {
-            /* Make sure that the CDC driver is ready for a transmission.
-             */
-            if(mUSBUSARTIsTxTrfReady() == true)
-            {
-                putrsUSBUSART(buttonMessage);
-                buttonPressed = true;
-            }
-        }
-    }
-    else
-    {
-        /* If the button is released, we can then allow a new message to be
-         * sent the next time the button is pressed.
-         */
-        buttonPressed = false;
+        CommandInSend(buffer, received);
     }
 
     /* Check to see if there is a transmission in progress, if there isn't, then
@@ -171,5 +130,6 @@ void APP_Tasks()
         }
     }
 
-    CDCTxService();
+    CDCService();
+    MetricsService();
 }

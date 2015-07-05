@@ -5,7 +5,6 @@
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="usb" displayName="usb" projectFiles="true">
-        <itemPath>usb/src/usb_device_local.h</itemPath>
         <itemPath>usb/usb_device_cdc.h</itemPath>
         <itemPath>usb/usb_device.h</itemPath>
         <itemPath>usb/usb_hal.h</itemPath>
@@ -13,19 +12,19 @@
         <itemPath>usb/usb.h</itemPath>
         <itemPath>usb/usb_hal_dspic33e.h</itemPath>
         <itemPath>usb/usb_common.h</itemPath>
+        <itemPath>usb_commands.h</itemPath>
+        <itemPath>usb/usb_metrics.h</itemPath>
+        <itemPath>usb/usb_commands.h</itemPath>
+        <itemPath>usb/usb_config.h</itemPath>
+        <itemPath>usb/usb_device_local.h</itemPath>
+        <itemPath>usb/usb_hal_local.h</itemPath>
       </logicalFolder>
-      <itemPath>adc.h</itemPath>
       <itemPath>app_led_usb_status.h</itemPath>
       <itemPath>buttons.h</itemPath>
-      <itemPath>print_ram_buffer.h</itemPath>
-      <itemPath>power.h</itemPath>
       <itemPath>leds.h</itemPath>
       <itemPath>io_mapping.h</itemPath>
       <itemPath>system.h</itemPath>
       <itemPath>system_config.h</itemPath>
-      <itemPath>usb_config.h</itemPath>
-      <itemPath>usb_hal_local.h</itemPath>
-      <itemPath>usb_commands.h</itemPath>
       <itemPath>app.h</itemPath>
       <itemPath>app_debug.h</itemPath>
       <itemPath>app_registers.h</itemPath>
@@ -34,17 +33,18 @@
                    displayName="Source Files"
                    projectFiles="true">
       <logicalFolder name="usb" displayName="usb" projectFiles="true">
-        <itemPath>usb/src/usb_hal_dspic33e.c</itemPath>
-        <itemPath>usb/src/usb_device.c</itemPath>
-        <itemPath>usb/src/usb_descriptors.c</itemPath>
-        <itemPath>usb/src/usb_device_cdc.c</itemPath>
+        <itemPath>usb/usb_hal_dspic33e.c</itemPath>
+        <itemPath>usb/usb_device.c</itemPath>
+        <itemPath>usb/usb_descriptors.c</itemPath>
+        <itemPath>usb/usb_metrics.c</itemPath>
+        <itemPath>usb/usb_commands.c</itemPath>
+        <itemPath>usb/usb_device_cdc.c</itemPath>
       </logicalFolder>
       <itemPath>app_led_usb_status.c</itemPath>
       <itemPath>buttons.c</itemPath>
       <itemPath>leds.c</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>system.c</itemPath>
-      <itemPath>usb_commands.c</itemPath>
       <itemPath>app.c</itemPath>
       <itemPath>app_debug.c</itemPath>
       <itemPath>app_registers.c</itemPath>

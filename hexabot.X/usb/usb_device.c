@@ -56,7 +56,7 @@ SUBSTITUTE GOODS, TECHNOLOGY, SERVICES, OR ANY CLAIMS BY THIRD PARTIES
 #include <usb/usb.h>
 #include <usb/usb_ch9.h>
 #include <usb/usb_device.h>
-#include <usb/src/usb_device_local.h>
+#include <usb/usb_device_local.h>
 
 #if defined(USB_USE_MSD)
     #include "usb/usb_device_msd.h"

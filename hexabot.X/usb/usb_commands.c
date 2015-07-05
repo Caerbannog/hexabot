@@ -1,21 +1,33 @@
+/*
+  This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-#include <system.h>
-#include <usb/usb.h>
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 #include "usb_commands.h"
 #include "app_debug.h"
+#include <system.h>
+#include <usb/usb.h>
 
-#include "usb/usb_device_cdc.h"
+static volatile uint8_t command_data_in[COMMAND_IN_EP_SIZE];
+static volatile uint8_t command_data_out[COMMAND_OUT_EP_SIZE];
 
-volatile uint8_t command_data_in[COMMAND_IN_EP_SIZE];
-volatile uint8_t command_data_out[COMMAND_OUT_EP_SIZE];
-
-USB_HANDLE CommandDataOutHandle;
-USB_HANDLE CommandDataInHandle;
+static USB_HANDLE CommandDataOutHandle;
+static USB_HANDLE CommandDataInHandle;
 
 
 void CommandInitEP(void)
 {
-    USBEnableEndpoint(COMMAND_EP, USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP /*TODO*/);
+    USBEnableEndpoint(COMMAND_EP, USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
 
     CommandDataOutHandle = USBRxOnePacket(COMMAND_EP,(uint8_t*)&command_data_out,sizeof(command_data_out));
     CommandDataInHandle = NULL;
@@ -80,8 +92,6 @@ void CommandInSend(uint8_t * buffer, uint8_t len)
         ERROR("empty command");
         return;
     }
-    
-    LED_Toggle(LED_D2); // TODO: consistent activity LED
 
     if(len + 2 > sizeof(command_data_in)) {
         USBUnmaskInterrupts();

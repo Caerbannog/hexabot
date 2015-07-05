@@ -38,3 +38,5 @@
 *
 ********************************************************************/
 void APP_LEDUpdateUSBStatus(void);
+
+// TODO: something like APP_LEDUpdateUSBStatus()

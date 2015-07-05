@@ -13,26 +13,31 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef APP_REGISTERS_H
-#define	APP_REGISTERS_H
+#include "usb_metrics.h"
+#include "app_debug.h"
+#include <system.h>
+#include <usb/usb.h>
 
-#include <stdint.h>
+static volatile uint8_t metrics_in[METRICS_IN_EP_SIZE];
 
-typedef struct {
-    const uint8_t * addr;
-    const uint8_t size;
-} register_t;
+static USB_HANDLE MetricsInHandle;
 
-typedef struct {
-    const uint8_t * args;
-    const uint8_t size;
-    const void (* procedure)(void); // Function pointer.
-} remote_prodecure_t;
 
-extern const register_t registers[];
-extern const remote_prodecure_t procedures[];
+void MetricsInitEP(void)
+{
+    USBEnableEndpoint(METRICS_EP, USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
 
-#define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
-#define PROC(var, proc)  { (uint8_t *)&(var), sizeof(var), proc }
+    MetricsInHandle = NULL;
+}
 
-#endif	/* APP_REGISTERS_H */
+
+void MetricsService(void)
+{
+    
+}
+
+
+void MetricsInSend(uint8_t * buffer, uint8_t len)
+{
+    MetricsService();
+}

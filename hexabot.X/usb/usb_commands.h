@@ -13,26 +13,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef APP_REGISTERS_H
-#define	APP_REGISTERS_H
+#ifndef USB_COMMANDS_H
+#define	USB_COMMANDS_H
 
+#include "usb_config.h"
+#include <usb/usb_common.h>
 #include <stdint.h>
 
-typedef struct {
-    const uint8_t * addr;
-    const uint8_t size;
-} register_t;
 
-typedef struct {
-    const uint8_t * args;
-    const uint8_t size;
-    const void (* procedure)(void); // Function pointer.
-} remote_prodecure_t;
+void CommandInitEP(void);
+uint8_t CommandOutPoll(uint8_t * buffer, uint8_t len);
+bool CommandEventHandler(USB_EVENT event, void *pdata, uint16_t size);
+void CommandInSend(uint8_t * buffer, uint8_t len);
 
-extern const register_t registers[];
-extern const remote_prodecure_t procedures[];
 
-#define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
-#define PROC(var, proc)  { (uint8_t *)&(var), sizeof(var), proc }
-
-#endif	/* APP_REGISTERS_H */
+#endif	/* USB_COMMANDS_H */

@@ -355,7 +355,7 @@ void CDCInitEP(void)
     line_coding.bCharFormat = 0x00;             // 1 stop bit
     line_coding.bParityType = 0x00;             // None
     line_coding.bDataBits = 0x08;               // 5,6,7,8, or 16
-
+    
     cdc_rx_len = 0;
     
     /*
@@ -890,7 +890,7 @@ void putrsUSBUSART(const const char *data)
     None                                                                 
   ************************************************************************/
  
-void CDCTxService(void)
+void CDCService(void)
 {
     uint8_t byte_to_send;
     uint8_t i;

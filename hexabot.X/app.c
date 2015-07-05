@@ -131,5 +131,6 @@ void APP_Tasks()
     }
 
     CDCService();
+    CommandService();
     MetricsService();
 }

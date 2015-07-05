@@ -18,26 +18,83 @@
 #include <system.h>
 #include <usb/usb.h>
 
-static volatile uint8_t metrics_in[METRICS_IN_EP_SIZE];
 
-static USB_HANDLE MetricsInHandle;
+// Ping-pong buffers to handle short bursts. Ping-pong is not enabled at the lower USB layer.
+static volatile uint8_t buffer_1[METRICS_IN_EP_SIZE];
+static volatile uint8_t buffer_2[METRICS_IN_EP_SIZE];
+
+static volatile uint8_t * current_buffer;
+static uint8_t current_buffer_len;
+
+static USB_HANDLE handle_in;
 
 
+/*
+ * This function is called after USB configuration and should (re-)initialize the module.
+ */
 void MetricsInitEP(void)
 {
     USBEnableEndpoint(METRICS_EP, USB_IN_ENABLED|USB_OUT_ENABLED|USB_HANDSHAKE_ENABLED|USB_DISALLOW_SETUP);
 
-    MetricsInHandle = NULL;
+    current_buffer = buffer_1;
+    current_buffer_len = 0;
+    handle_in = NULL;
 }
 
 
+void MetricsAppend(metric_id_t id, float value)
+{
+    metric_t metric = { id, value };
+    // TODO time
+    MetricsAppendRaw((uint8_t *)&metric, sizeof(metric));
+}
+
+
+/*
+ * Append a value to the buffer so that the service can send it as soon as possible.
+ */
+void MetricsAppendRaw(uint8_t * buffer, uint8_t len)
+{
+    if (current_buffer_len + len > METRICS_IN_EP_SIZE) { // Buffer full.
+        ERROR("metrics dropped %d bytes", len);
+        return;
+    }
+    
+    memcpy((uint8_t *)current_buffer + current_buffer_len, buffer, len);
+    current_buffer_len += len;
+}
+
+
+/*
+ * This function should be called periodically to push buffered data to the host.
+ */
 void MetricsService(void)
 {
+    if (current_buffer_len == 0) {
+        return; // No pending data.
+    }
     
-}
+    USBMaskInterrupts();
 
-
-void MetricsInSend(uint8_t * buffer, uint8_t len)
-{
-    MetricsService();
+    if(USBHandleBusy(handle_in)) {
+        // The previous transaction is not complete.
+        USBUnmaskInterrupts();
+    }
+    else {
+        // Note: there might be a need for a zero length packet state for full buffers.
+        // See explanation in USB Specification 2.0: Section 5.8.3
+        
+        handle_in = USBTxOnePacket(METRICS_EP, (uint8_t *)current_buffer, current_buffer_len);
+    
+        USBUnmaskInterrupts();
+        
+        // Swap the buffers.
+        if (current_buffer == buffer_1) {
+            current_buffer = buffer_2;
+        }
+        else {
+            current_buffer = buffer_1;
+        }
+        current_buffer_len = 0;
+    }
 }

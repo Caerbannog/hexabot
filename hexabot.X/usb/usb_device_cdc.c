@@ -854,7 +854,7 @@ void putrsUSBUSART(const const char *data)
     This function is needed, in order to advance the internal software state 
     machine that takes care of sending multiple transactions worth of IN USB
     data to the host, associated with CDC serial data.  Failure to call 
-    CDCTxService() perioidcally will prevent data from being sent to the
+    CDCTxService() periodically will prevent data from being sent to the
     USB host, over the CDC serial data interface.
     
     Typical Usage:

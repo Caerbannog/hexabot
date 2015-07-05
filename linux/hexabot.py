@@ -7,9 +7,9 @@ import usb.core
 import usb.util
 import usb.control
 import time
+import struct
 
 
-# Use CDC with: miniterm.py /dev/ttyACM* 9600
 CDC_CONTROL_INTERFACE = 0
 CDC_DATA_INTERFACE = 1
 COMMAND_INTERFACE = 2
@@ -21,11 +21,10 @@ ISOCHRONOUS_OUT_EP = 4
 METRICS_OUT_EP = 5
 
 COMMAND_OUT_SIZE = 64
-COMMAND_IN_SIZE = 64 # FIXME: smaller size in read() calls for non blocking?
+COMMAND_IN_SIZE  = 64
 METRICS_OUT_SIZE = 64
 
 COMMAND_TIMEOUT = 1000
-
 
 class controller:
     def __init__(self, interface_numbers):
@@ -79,9 +78,37 @@ class controller:
             else:
                 raise
     
+    def handle_isochronous():
+        pass # TODO
     
     def dump_metrics(self):
-        while True:
-            s = self.dev.read(METRICS_OUT_EP, METRICS_OUT_SIZE,
-                              interface=METRICS_INTERFACE, timeout=0).tostring()
-            print(s.decode('utf-8'))
+        fmt = struct.Struct('<BHf') # little-endian, uint8_t, uint16_t, float
+        
+        last_realtime = -1
+        last_datatime = -1
+        
+        with open('metrics.txt', 'a') as file_out:
+            try:
+                while True:
+                    raw_metrics = self.dev.read(METRICS_OUT_EP, METRICS_OUT_SIZE,
+                                                interface=METRICS_INTERFACE, timeout=0).tostring() # FIXME: work on array to skip tostring()
+                    
+                    if len(raw_metrics) % fmt.calcsize(METRICS_FORMAT) != 0:
+                        raise Exception('Unaligned metrics size %d' % len(raw_metrics))
+                    
+                    for (m_id, m_datatime, m_value) in fmt.iter_unpack(raw_metrics):
+                        if last_realtime == -1: # This will be the reference point
+                            last_realtime = time.time()
+                            last_datatime = m_datatime
+                        
+                        # TODO: elif last_datatime < m_datatime: # Rollover
+                        #~ else:
+                            #~ last_realtime = last_realtime + (m_datatime - last_datatime) * 1 # TODO
+                            #~ last_datatime = m_datatime
+                            # TODO: if last_realtime < time.time() + ticker_max_delay: we lost track of time
+                        
+                        line = "%d %f %f\n" % (m_id, last_realtime, m_value)
+                        print(line)
+                        file_out.write(line)
+            except KeyboardInterrupt:
+                pass

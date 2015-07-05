@@ -20,9 +20,33 @@
 #include <stdint.h>
 
 
+typedef enum {
+    METRIC_TICKER,
+    METRIC_DEBUG_1,
+    METRIC_DEBUG_2,
+    METRIC_DEBUG_3,
+    METRIC_DEBUG_4,
+    METRIC_BATTERY_VOLTAGE,
+    METRIC_X,
+    METRIC_Y,
+    METRIC_THETA,
+    METRIC_DISTANCE,
+    METRIC_SPEED,
+    
+    METRICS_COUNT
+} metric_id_t;
+
+typedef struct __attribute__ ((__packed__)) {
+    uint8_t metric_id;
+    uint16_t time;
+    float value;
+} metric_t;
+
+
 void MetricsInitEP(void);
+void MetricsAppend(metric_id_t id, float value);
+void MetricsAppendRaw(uint8_t * buffer, uint8_t len);
 void MetricsService(void);
-void MetricsInSend(uint8_t * buffer, uint8_t len);
 
 
 #endif	/* USB_METRICS_H */

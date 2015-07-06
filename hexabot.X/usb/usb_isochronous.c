@@ -19,7 +19,7 @@
 #include <system.h>
 
 
-iso_frame_t isochronous_frame;
+iso_frame_t isochronous_frame; // TODO: should be double-buffered
 
 static USB_HANDLE handle_in;
 
@@ -42,7 +42,7 @@ void IsochronousSend(void)
         return;
     }
     
-    // TODO
+    isochronous_frame.test1++;
     
     handle_in = USBTxOnePacket(ISOCHRONOUS_EP, (uint8_t *)&isochronous_frame, sizeof(isochronous_frame));
 }

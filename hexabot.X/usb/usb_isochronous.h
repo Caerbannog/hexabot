@@ -30,6 +30,7 @@ extern iso_frame_t isochronous_frame;
 
 
 void IsochronousInitEP(void);
+void IsochronousSend(void);
 
 
 #endif	/* USB_ISOCHRONOUS_H */

@@ -83,6 +83,10 @@ void APP_Tasks()
         CommandInSend((uint8_t *)str, strlen(str));
     }
     
+    if (BUTTON_IsPressed(BUTTON_S3)) {
+        IsochronousSend();
+    }
+    
     uint8_t buffer[CDC_DATA_OUT_EP_SIZE];
     uint8_t received = CommandOutPoll(buffer, sizeof(buffer));
     if (received > 0) {

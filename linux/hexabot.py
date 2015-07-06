@@ -83,14 +83,14 @@ class controller:
                 raise
     
     
-    def dump_isochronous():
+    def dump_isochronous(self):
         while True:
             try:
                 frame = self.dev.read(ISOCHRONOUS_IN_EP, ISOCHRONOUS_IN_SIZE,
                                       interface=ISOCHRONOUS_INTERFACE,
                                       timeout=INTERACTION_TIMEOUT)
-                
-                print(' '.join([format(i, '02x') for i in frame]))
+                if frame:
+                    print(' '.join([format(i, '02x') for i in frame]))
             except KeyboardInterrupt:
                 return
             except usb.core.USBError as e:

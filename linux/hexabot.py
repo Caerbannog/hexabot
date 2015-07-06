@@ -27,7 +27,7 @@ ISOCHRONOUS_IN_SIZE = 128 # TODO: update
 METRICS_IN_SIZE  = 64
 
 COMMAND_TIMEOUT = 1000
-INTERACTION_TIMEOUT = 500 # used to respond to KeyboardInterrupt
+INTERACTION_TIMEOUT = 200 # used to respond to KeyboardInterrupt
 
 
 class controller:
@@ -101,13 +101,12 @@ class controller:
             
     
     def dump_metrics(self):
-        TIMER_PERIOD = 0 # TODO: update
-        TIMER_MAX = 0 # TODO: update
+        TIMER_FREQ = 256. / 70e6
         
-        fmt = struct.Struct('<BHf') # little-endian, uint8_t, uint16_t, float
+        fmt = struct.Struct('<LfB') # little-endian, uint32_t, float, uint8_t
         
-        last_realtime = -1
-        last_timer = -1
+        reference_realtime = -1
+        reference_timer = -1
         
         with open('metrics.txt', 'a') as file_out:
             while True:
@@ -119,19 +118,14 @@ class controller:
                     if len(raw_metrics) % fmt.size != 0:
                         raise Exception('Unaligned metrics size %d' % len(raw_metrics))
                     
-                    for (m_id, m_timer, m_value) in fmt.iter_unpack(raw_metrics):
-                        if last_realtime == -1: # This will be the reference point
-                            last_realtime = time.time()
-                            last_timer = m_timer
-                        else:
-                            last_realtime = last_realtime + TIMER_PERIOD * (m_timer - last_timer) / TIMER_MAX
-                            
-                            if m_timer < last_timer: # Rollover
-                                last_realtime += TIMER_PERIOD
-                            
-                            last_timer = m_timer
+                    for (m_timer, m_value, m_id) in fmt.iter_unpack(raw_metrics):
+                        if reference_realtime == -1: # This will be the reference point
+                            reference_realtime = time.time()
+                            reference_timer = m_timer
                         
-                        line = "%d %f %.2f" % (m_id, last_realtime, m_value)
+                        realtime = reference_realtime + (m_timer - reference_timer) * TIMER_FREQ
+                        
+                        line = "%d %f %.2f" % (m_id, realtime, m_value)
                         print(line)
                         file_out.write(line + "\n")
                 except KeyboardInterrupt:

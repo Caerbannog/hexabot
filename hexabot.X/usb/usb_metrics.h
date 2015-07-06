@@ -37,9 +37,9 @@ typedef enum {
 } metric_id_t;
 
 typedef struct __attribute__ ((__packed__)) {
-    uint8_t metric_id;
-    uint16_t time;
+    uint32_t time;
     float value;
+    uint8_t metric_id;
 } metric_t;
 
 

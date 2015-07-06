@@ -23,6 +23,7 @@
 #include <usb/usb_config.h>
 #include <usb/usb.h>
 #include <system.h>
+#include <timer.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -53,6 +54,8 @@ void APP_Initialize()
     CommandInitEP();
     MetricsInitEP();
     IsochronousInitEP();
+    OpenTimer23(T2_ON & T2_IDLE_CON & T2_GATE_OFF & T2_PS_1_256 & T2_32BIT_MODE_ON
+               & T2_SOURCE_INT & T2_INT_PRIOR_0 & T2_INT_OFF, 0xFFFFFFFF); // Will overflow after 4 hours.
 }
 
 /*********************************************************************

@@ -17,6 +17,7 @@
 #include <usb/usb_debug.h>
 #include <usb/usb.h>
 #include <system.h>
+#include <timer.h>
 
 
 // Ping-pong buffers to handle short bursts. Ping-pong is not enabled at the lower USB layer.
@@ -59,8 +60,8 @@ static void MetricsAppendRaw(uint8_t * buffer, uint8_t len)
 
 void MetricsAppend(metric_id_t id, float value)
 {
-    uint16_t time = 0; // TODO
-    metric_t metric = { id, time, value };
+    uint32_t time = ReadTimer23();
+    metric_t metric = { time, value, id };
     MetricsAppendRaw((uint8_t *)&metric, sizeof(metric));
 }
 

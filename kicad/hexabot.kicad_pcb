@@ -389,6 +389,11 @@
       (net 39 /USB_SHIELD))
     (pad 5 smd rect (at -3.79984 -1.4478) (size 1.79578 1.89738) (layers F.Cu F.Paste F.Mask)
       (net 39 /USB_SHIELD))
+    (model Connect.3dshapes/USB_B_micro_SMD.wrl
+      (at (xyz 0 0.05 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Resistors_SMD:R_0805 (layer B.Cu) (tedit 557F35AB) (tstamp 557C0479)
@@ -1576,6 +1581,11 @@
       (net 2 GND))
     (pad 2 thru_hole oval (at 1.9812 0 90) (size 2.99974 5.00126) (drill 1.80086) (layers *.Cu *.Mask F.SilkS)
       (net 110 "Net-(D1-Pad2)"))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK156_26-60-4020.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM3-96mm_Lock_2pin_straight (layer F.Cu) (tedit 55807D6F) (tstamp 557C0571)
@@ -1602,6 +1612,11 @@
       (net 2 GND))
     (pad 2 thru_hole oval (at 1.9812 0 90) (size 2.99974 5.00126) (drill 1.80086) (layers *.Cu *.Mask F.SilkS)
       (net 111 "Net-(D1-Pad1)"))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK156_26-60-4020.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Pin_Headers:Pin_Header_Straight_1x03 (layer F.Cu) (tedit 557F33B0) (tstamp 557C0578)
@@ -1737,6 +1752,11 @@
       (net 1 +BATT))
     (pad 2 thru_hole oval (at 1.9812 0 90) (size 2.99974 5.00126) (drill 1.80086) (layers *.Cu *.Mask F.SilkS)
       (net 3 /DRIVER_L/MOTOR_POWER))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK156_26-60-4020.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Pin_Headers:Pin_Header_Straight_1x06 (layer F.Cu) (tedit 0) (tstamp 557C0598)
@@ -1805,6 +1825,11 @@
       (net 2 GND))
     (pad 2 thru_hole oval (at 1.27 0) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 37 /BUMP_1))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2021.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_2pin_straight (layer F.Cu) (tedit 55807D9E) (tstamp 557C05A4)
@@ -1832,6 +1857,11 @@
       (net 2 GND))
     (pad 2 thru_hole oval (at 1.27 0) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 38 /BUMP_2))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2021.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_5pin_straight (layer F.Cu) (tedit 557F343F) (tstamp 557C05BC)
@@ -1862,6 +1892,11 @@
       (net 42 /LEDG))
     (pad 5 thru_hole oval (at 5.08 0 90) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 9 +3V3))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2051.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_5pin_straight (layer F.Cu) (tedit 0) (tstamp 557C05C5)
@@ -1892,6 +1927,11 @@
       (net 47 /SCK))
     (pad 5 thru_hole oval (at 5.08 0) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 9 +3V3))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2051.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM3-96mm_Lock_2pin_straight locked (layer F.Cu) (tedit 55807D5E) (tstamp 557C05CB)
@@ -1918,6 +1958,11 @@
       (net 16 /DRIVER_R/OUT2))
     (pad 2 thru_hole oval (at 1.9812 0 180) (size 2.99974 5.00126) (drill 1.80086) (layers *.Cu *.Mask F.SilkS)
       (net 13 /DRIVER_R/OUT1))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK156_26-60-4020.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM3-96mm_Lock_2pin_straight locked (layer F.Cu) (tedit 55807D4E) (tstamp 557C05D1)
@@ -1944,6 +1989,11 @@
       (net 22 /DRIVER_L/OUT2))
     (pad 2 thru_hole oval (at 1.9812 0 180) (size 2.99974 5.00126) (drill 1.80086) (layers *.Cu *.Mask F.SilkS)
       (net 19 /DRIVER_L/OUT1))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK156_26-60-4020.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_4pin_straight (layer F.Cu) (tedit 55807DF6) (tstamp 557C05D9)
@@ -1972,6 +2022,11 @@
       (net 49 "Net-(P16-Pad3)"))
     (pad 4 thru_hole oval (at 3.81 0) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 5 +5V))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2041.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_4pin_straight (layer F.Cu) (tedit 55807D47) (tstamp 557C05E1)
@@ -2000,6 +2055,11 @@
       (net 51 /ENC_1_B))
     (pad 4 thru_hole oval (at 3.81 0 270) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 5 +5V))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2041.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_4pin_straight (layer F.Cu) (tedit 55807D59) (tstamp 557C05E9)
@@ -2028,6 +2088,11 @@
       (net 53 /ENC_2_B))
     (pad 4 thru_hole oval (at 3.81 0 180) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 5 +5V))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2041.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_4pin_straight (layer F.Cu) (tedit 55807D65) (tstamp 557C05F1)
@@ -2056,6 +2121,11 @@
       (net 55 /ENC_3_B))
     (pad 4 thru_hole oval (at 3.81 0 90) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 5 +5V))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2041.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_4pin_straight (layer F.Cu) (tedit 55807D55) (tstamp 557C05F9)
@@ -2084,6 +2154,11 @@
       (net 57 /ENC_4_B))
     (pad 4 thru_hole oval (at 3.81 0 180) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 5 +5V))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2041.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Pin_Headers:Pin_Header_Straight_1x06 (layer F.Cu) (tedit 55807F3B) (tstamp 557C0603)
@@ -2157,6 +2232,11 @@
       (net 65 /I2C_POWER))
     (pad 6 thru_hole oval (at 6.35 0 270) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 5 +5V))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2061.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Sockets_MOLEX_KK-System:Socket_MOLEX-KK-RM2-54mm_Lock_2pin_straight (layer F.Cu) (tedit 55807D96) (tstamp 557C0613)
@@ -2184,6 +2264,11 @@
       (net 2 GND))
     (pad 2 thru_hole oval (at 1.27 0) (size 1.80086 3.50012) (drill 1.19888) (layers *.Cu *.Mask F.SilkS)
       (net 66 /START))
+    (model Connectors_Molex.3dshapes/Connector_Molex_KK100_22-23-2021.wrl
+      (at (xyz 0 0 0))
+      (scale (xyz 1 1 1))
+      (rotate (xyz 0 0 0))
+    )
   )
 
   (module Pin_Headers:Pin_Header_Straight_1x01 (layer F.Cu) (tedit 557F34DA) (tstamp 557C0618)
@@ -3942,7 +4027,7 @@
       (net 2 GND))
     (pad 21 smd rect (at 0 0 180) (size 16.09852 3.39852) (layers F.Cu F.Paste F.Mask)
       (net 2 GND) (zone_connect 2))
-    (model walter/smd_dil/powerso-20.wrl
+    (model Power_Packages_SMD.3dshapes/PowerSO-20.wrl
       (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))
@@ -4333,7 +4418,7 @@
       (net 2 GND))
     (pad 21 smd rect (at 0 0 180) (size 16.09852 3.39852) (layers F.Cu F.Paste F.Mask)
       (net 2 GND) (zone_connect 2))
-    (model walter/smd_dil/powerso-20.wrl
+    (model Power_Packages_SMD.3dshapes/PowerSO-20.wrl
       (at (xyz 0 0 0))
       (scale (xyz 1 1 1))
       (rotate (xyz 0 0 0))

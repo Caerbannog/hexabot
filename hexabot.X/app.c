@@ -86,7 +86,7 @@ void APP_Tasks()
         CommandInSend((uint8_t *)str, strlen(str));
     }
     
-    if (BUTTON_IsPressed(BUTTON_S3)) {
+    if (false) {
         IsochronousSend();
     }
     

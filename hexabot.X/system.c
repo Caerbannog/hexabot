@@ -35,7 +35,7 @@
 #pragma config GSSK = OFF               // General Segment Key bits (General Segment Write Protection and Code Protection is Disabled)
 
 // FOSCSEL
-#pragma config FNOSC = PRIPLL           // Initial Oscillator Source Selection Bits (Primary Oscillator (XT, HS, EC) with PLL)
+#pragma config FNOSC = FRCDIV16
 #pragma config IESO = OFF               // Two-speed Oscillator Start-up Enable bit (Start up with user-selected oscillator source)
 
 // FOSC
@@ -55,7 +55,9 @@
 #pragma config FPWRT = PWR128           // Power-on Reset Timer Value Select bits (128ms)
 #pragma config BOREN = OFF              // Brown-out Reset (BOR) Detection Enable bit (BOR is disabled)
 #pragma config ALTI2C1 = OFF            // Alternate I2C pins for I2C1 (SDA1/SCK1 pins are selected as the I/O pins for I2C1)
+#if defined(__dsPIC33EP256MU810__) || defined(__dsPIC33EP512MU810__)
 #pragma config ALTI2C2 = OFF            // Alternate I2C pins for I2C2 (SDA2/SCK2 pins are selected as the I/O pins for I2C2)
+#endif
 
 // FICD
 #pragma config ICS = PGD1               // ICD Communication Channel Select bits (Communicate on PGEC1 and PGED1)
@@ -84,7 +86,6 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
     switch(state)
     {
         case SYSTEM_STATE_USB_START:
-            ANSELA = 0x0000;
             ANSELB = 0x0000;
             ANSELC = 0x0000;
             ANSELD = 0x0000;
@@ -128,7 +129,6 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             LED_Enable(LED_D3);
             BUTTON_Enable(BUTTON_S1);
             BUTTON_Enable(BUTTON_S2);
-            BUTTON_Enable(BUTTON_S3);
             break;
 
         case SYSTEM_STATE_USB_SUSPEND:

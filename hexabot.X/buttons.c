@@ -27,11 +27,10 @@
 /*** Button Definitions *********************************************/
 #define S1_PORT  PORTDbits.RD6
 #define S2_PORT  PORTDbits.RD7
-#define S3_PORT  PORTDbits.RD13
+// RD13 is unavailable on 806 dsPIC so no BUTTON_S3.
 
 #define S1_TRIS  TRISDbits.TRISD6
 #define S2_TRIS  TRISDbits.TRISD7
-#define S3_TRIS  TRISDbits.TRISD13
 
 #define BUTTON_PRESSED      0
 #define BUTTON_NOT_PRESSED  1
@@ -71,9 +70,6 @@ bool BUTTON_IsPressed(BUTTON button)
         case BUTTON_S2:
             return ( (S2_PORT == BUTTON_PRESSED) ? true : false);
 
-        case BUTTON_S3:
-            return ( (S3_PORT == BUTTON_PRESSED) ? true : false);
-
         case BUTTON_NONE:
             return false ;
     }
@@ -107,10 +103,6 @@ void BUTTON_Enable(BUTTON button)
 
         case BUTTON_S2:
             S2_TRIS = PIN_INPUT;
-            break;
-
-        case BUTTON_S3:
-            S3_TRIS = PIN_INPUT;
             break;
 
         case BUTTON_NONE:

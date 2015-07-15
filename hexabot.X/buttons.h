@@ -31,7 +31,6 @@ typedef enum
     BUTTON_NONE,
     BUTTON_S1,
     BUTTON_S2,
-    BUTTON_S3,
 } BUTTON;
 
 /*********************************************************************

@@ -16,6 +16,10 @@
 #include "app_registers.h"
 #include <xc.h>
 
+#ifndef PORTA // 806 dsPIC
+uint8_t PORTA = 0;
+uint8_t LATA = 0;
+#endif
 
 uint16_t vbat = 0;
 float Kp = 0;

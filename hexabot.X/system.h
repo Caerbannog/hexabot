@@ -23,7 +23,7 @@
 #ifndef SYSTEM_H
 #define SYSTEM_H
 
-#include <p33EP512MU810.h>
+#include <xc.h>
 #include <stdbool.h>
 
 #include "adc.h"

@@ -48,8 +48,18 @@
  *******************************************************************/
 MAIN_RETURN main(void)
 {
+#if 1 // Blink test
+    LED_Enable(LED_D1);
+    while(1) {
+        int i;
+        for (i = 0; i < 16000; i++) {
+        }
+        LED_Toggle(LED_D1);
+    }
+#endif
+    
     SYSTEM_Initialize(SYSTEM_STATE_USB_START);
-
+    
     USBDeviceInit();
     USBDeviceAttach();
     

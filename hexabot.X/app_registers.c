@@ -14,11 +14,15 @@
  */
 
 #include "app_registers.h"
+#include <usb/usb_commands.h>
+#include <usb/usb_debug.h>
+#include <string.h>
 #include <xc.h>
 
 #ifndef PORTA // 806 dsPIC
 uint8_t PORTA = 0;
-uint8_t LATA = 0;
+uint8_t LATA  = 0;
+uint8_t TRISA = 0;
 #endif
 
 uint16_t vbat = 0;
@@ -48,12 +52,22 @@ const register_t registers[] = {
     REG_VAR(LATF),
     REG_VAR(LATG),
     // 14
+    REG_VAR(TRISA),
+    REG_VAR(TRISB),
+    REG_VAR(TRISC),
+    REG_VAR(TRISD),
+    REG_VAR(TRISE),
+    REG_VAR(TRISF),
+    REG_VAR(TRISG),
+    // 21
     REG_VAR(vbat),
     REG_VAR(Kp),
     REG_VAR(Ki),
     REG_VAR(Kd),
-    // 18
+    // 25
 };
+
+const uint8_t register_count = sizeof(registers) / sizeof(*registers);
 
 const remote_prodecure_t procedures[] = {
     { /*registers are not handled by a dedicated function*/ },
@@ -63,3 +77,28 @@ const remote_prodecure_t procedures[] = {
     PROC(I2C_args, 0)
     // 4
 };
+
+void register_command(uint8_t * buffer, uint8_t received)
+{
+    // FIXME: assert sizeof register
+    uint8_t reg = buffer[0];
+    if (reg >= register_count) {
+        ERROR("reg=%d", reg);
+    }
+    else {
+        uint8_t reg_size = registers[reg].size;
+        if (received == 1) {
+            memcpy(buffer, registers[reg].addr, reg_size);
+            CommandInSend(buffer, reg_size);
+            return;
+        }
+        else if (received - 1 > reg_size) {
+            ERROR("reg=%d smaller than received=%d", reg, received);
+        }
+        else {
+            memcpy(registers[reg].addr, buffer + 1, received - 1);
+        }
+    }
+    buffer[0] = 0xFF;
+    CommandInSend(buffer, 1); // TODO ACK
+}

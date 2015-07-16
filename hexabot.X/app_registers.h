@@ -19,7 +19,7 @@
 #include <stdint.h>
 
 typedef struct {
-    const uint8_t * addr;
+    uint8_t * const addr;
     const uint8_t size;
 } register_t;
 
@@ -30,9 +30,13 @@ typedef struct {
 } remote_prodecure_t;
 
 extern const register_t registers[];
+extern const uint8_t register_count;
 extern const remote_prodecure_t procedures[];
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
 #define PROC(var, proc)  { (uint8_t *)&(var), sizeof(var), proc }
+
+
+void register_command(uint8_t * buffer, uint8_t received);
 
 #endif	/* APP_REGISTERS_H */

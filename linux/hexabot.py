@@ -56,6 +56,7 @@ class controller:
         written = self.dev.write(COMMAND_OUT_EP, cmd,
                                  interface=COMMAND_INTERFACE,
                                  timeout=COMMAND_TIMEOUT)
+        #~ print(' '.join([format(i, '02x') for i in cmd]))
         if written != len(cmd):
             raise Exception('Wrote %d bytes instead of %d' % (written, len(cmd)))
     
@@ -63,6 +64,7 @@ class controller:
     def receive_command(self):
         answer = self.dev.read(COMMAND_IN_EP, COMMAND_IN_SIZE, interface=COMMAND_INTERFACE,
                                timeout=COMMAND_TIMEOUT) # Header
+        #~ print(' '.join([format(i, '02x') for i in answer]))
         
         if answer[0] + 2 != len(answer):
             raise Exception('Unexpected header=%d for answer len=%d' % (answer[0], len(answer)))

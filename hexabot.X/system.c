@@ -69,6 +69,12 @@
 #pragma config APL = OFF                // Auxiliary Segment Code-protect bit (Aux Flash Code protect is disabled)
 #pragma config APLK = OFF               // Auxiliary Segment Key bits (Aux Flash Write Protection and Code Protection is Disabled)
 
+
+
+#define PIN_INPUT           1
+#define PIN_OUTPUT          0
+
+
 /*********************************************************************
 * Function: void SYSTEM_Initialize( SYSTEM_STATE state )
 *
@@ -129,6 +135,30 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             LED_Enable(LED_D3);
             BUTTON_Enable(BUTTON_S1);
             BUTTON_Enable(BUTTON_S2);
+            
+            // FIXME: define macro to map pin in a single file
+            TRISDbits.TRISD8 = PIN_INPUT; // ENC_1_A
+            TRISDbits.TRISD9 = PIN_INPUT; // ENC_1_B
+            
+            TRISDbits.TRISD10 = PIN_INPUT; // ENC_2_A
+            TRISDbits.TRISD11 = PIN_INPUT; // ENC_2_B
+            // TODO enc 3-4
+            
+            TRISE = 0x00; // FIXME: split servo and H-bridges
+            
+            // TODO GPIO 1-3
+            // TODO BUMP et START
+            // TODO UART1
+            // TODO UART2
+            // TODO I2C
+            // TODO soft pullup / down
+            // TODO SPI
+            // TODO define names for LED colors
+            // TODO H-bridge vsense
+            // TODO Vbat sense
+            // TODO servo
+            // TODO dynamixel
+            
             break;
 
         case SYSTEM_STATE_USB_SUSPEND:

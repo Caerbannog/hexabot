@@ -26,6 +26,12 @@
 #include <leds.h>
 #include <buttons.h>
 #include <adc.h>
+#include <uart.h>
+#include <spi.h>
+#include <i2c.h>
+#include <qei32.h>
+#include <pps.h>
+#include <outcompare.h>
 #include <xc.h>
 
 /** CONFIGURATION Bits **********************************************/
@@ -92,12 +98,6 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
     switch(state)
     {
         case SYSTEM_STATE_USB_START:
-            ANSELB = 0x0000;
-            ANSELC = 0x0000;
-            ANSELD = 0x0000;
-            ANSELE = 0x0000;
-            ANSELG = 0x0000;
-
             // Configure the device PLL to obtain 60 MIPS operation. The crystal
             // frequency is 8MHz. Divide 8MHz by 2, multiply by 60 and divide by
             // 2. This results in Fosc of 120MHz. The CPU clock frequency is
@@ -130,11 +130,13 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             ACLKCON3bits.ENAPLL = 1;
             while(ACLKCON3bits.APLLCK != 1);
 
-            LED_Enable(LED_D1);
-            LED_Enable(LED_D2);
-            LED_Enable(LED_D3);
+            
+            LED_Enable(LED_R);
+            LED_Enable(LED_Y);
+            LED_Enable(LED_G);
             BUTTON_Enable(BUTTON_S1);
             BUTTON_Enable(BUTTON_S2);
+            
             
             // FIXME: define macro to map pin in a single file
             TRISDbits.TRISD8 = PIN_INPUT; // ENC_1_A
@@ -146,18 +148,94 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             
             TRISE = 0x00; // FIXME: split servo and H-bridges
             
-            // TODO GPIO 1-3
             // TODO BUMP et START
-            // TODO UART1
-            // TODO UART2
-            // TODO I2C
             // TODO soft pullup / down
-            // TODO SPI
-            // TODO define names for LED colors
             // TODO H-bridge vsense
-            // TODO Vbat sense
-            // TODO servo
             // TODO dynamixel
+            
+            OpenUART1(UART_EN & UART_IDLE_STOP & UART_IrDA_DISABLE & UART_MODE_SIMPLEX
+                    & UART_UEN_00 & UART_DIS_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD
+                    & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_NO_PAR_8BIT & UART_1STOPBIT,
+                    UART_INT_TX_BUF_EMPTY & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED
+                    & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS
+                    & UART_RX_OVERRUN_CLEAR,
+                    Fcy / 16 / 115200 - 1);
+            PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RP99);
+            PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP69); // HW HACK: TX is on GPIO3
+            
+            OpenUART2(UART_EN & UART_IDLE_STOP & UART_IrDA_DISABLE & UART_MODE_SIMPLEX
+                    & UART_UEN_00 /*FIXME*/ & UART_DIS_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD
+                    & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_NO_PAR_8BIT & UART_1STOPBIT,
+                    UART_INT_TX_BUF_EMPTY & UART_IrDA_POL_INV_ZERO & UART_SYNC_BREAK_DISABLED
+                    & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS
+                    & UART_RX_OVERRUN_CLEAR,
+                    Fcy / 16 / 9600 - 1);
+            // FIXME: PPSInput(IN_FN_PPS_U2RX, IN_PIN_PPS_RP);
+            // FIXME: PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP);
+            
+            /* FIXME
+            OpenSPI1(ENABLE_SCK_PIN & ENABLE_SDO_PIN & SPI_MODE16_OFF & SPI_SMP_OFF
+                    & SPI_CKE_ON & SLAVE_ENABLE_OFF & CLK_POL_ACTIVE_LOW & MASTER_ENABLE_ON
+                    & SEC_PRESCAL_1_1 & PRI_PRESCAL_1_1,
+                    FRAME_ENABLE_OFF & FRAME_SYNC_INPUT & FRAME_ENABLE_OFF & FRAME_SYNC_EDGE_COINCIDE
+                    & FIFO_BUFFER_DISABLE,
+                    SPI_ENABLE & SPI_IDLE_STOP & SPI_RX_OVFLOW_CLR);
+            */
+            /* FIXME
+            OpenI2C1(I2C1_ON & I2C1_IDLE_STOP & I2C1_CLK_REL & I2C1_IPMI_DIS & I2C1_7BIT_ADD
+                    & I2C1_SLW_DIS & I2C1_SM_DIS & I2C1_GCALL_DIS & I2C1_STR_DIS
+                    & I2C1_NACK & I2C1_ACK_DIS & I2C1_RCV_DIS & I2C1_STOP_DIS & I2C1_RESTART_DIS
+                    & I2C1_START_DIS,
+                    I2C1_STOP_COND_INT_DIS & I2C1_START_COND_INT_DIS & I2C1_BUF_OVERWRITE_DIS
+                    & I2C1_SDA_HOLD_TIME_SEL_100 & I2C1_SLAVE_BUS_COL_DETECT_DIS
+                    & I2C1_ADDR_HOLD_DIS & I2C1_DATA_HOLD_DIS);
+            */
+            
+            Open32bitQEI1(QEI_COUNTER_QEI_MODE & QEI_GATE_DISABLE & QEI_COUNT_POSITIVE
+                    & QEI_INPUT_PRESCALE_1 & QEI_INDEX_MATCH_NO_EFFECT & QEI_POS_COUNT_INIT_No_EFFECT
+                    & QEI_IDLE_CON /*TODO*/ & QEI_COUNTER_ENABLE,
+                    QEI_QEA_POL_NON_INVERTED & QEI_QEB_POL_NON_INVERTED & QEI_INDX_POL_NON_INVERTED
+                    & QEI_HOM_POL_NON_INVERTED & QEI_QEA_QEB_NOT_SWAPPED
+                    & QEI_COMPARE_HIGH_OUTPUT_DISABLE & QEI_DIF_FLTR_PRESCALE_1 & QEI_DIG_FLTR_DISABLE /*TODO*/
+                    & QEI_POS_COUNT_TRIG_DISABLE,
+                    QEI_INDEX_INTERRUPT_DISABLE & QEI_HOME_INTERRUPT_DISABLE & QEI_VELO_OVERFLOW_INTERRUPT_DISABLE
+                    & QEI_POS_INIT_INTERRUPT_DISABLE & QEI_POS_OVERFLOW_INTERRUPT_DISABLE
+                    & QEI_POS_LESS_EQU_INTERRUPT_DISABLE & QEI_POS_GREAT_EQU_INTERRUPT_DISABLE);
+            /* TODO: bug ENC_1_B (RD9) stuck
+            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP72);
+            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP73);
+            */
+            // ENC_2
+            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP74);
+            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP75);
+            
+            // TODO: macro for Open32bitQEI2
+
+            /* TODO
+            OpenADC1(ADC_MODULE_ON & ADC_IDLE_STOP & ADC_ADDMABM_ORDER & ADC_AD12B_12BIT
+                    & ADC_FORMAT_INTG & ADC_SSRC_MANUAL & ADC_AUTO_SAMPLING_ON & ADC_SIMULTANEOUS
+                    & ADC_SAMP_ON,
+                    ADC_VREF_AVDD_AVSS & ADC_SCAN_OFF & ADC_SELECT_CHAN_0 & ADC_ALT_BUF_OFF
+                    & ADC_ALT_INPUT_OFF,
+                    ADC_SAMPLE_TIME_31 & ADC_CONV_CLK_INTERNAL_RC & ADC_CONV_CLK_256Tcy,
+                    ADC_DMA_BUF_LOC_128,
+                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Set most pins to digital instead of analog.
+                    SCAN_NONE_0_15, SCAN_NONE_16_31);
+            */
+            
+            // TODO
+            OpenOC1(OC_IDLE_STOP & OC_SYSCLK_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
+                    & OC_FAULTC_IN_DISABLE & OC_PWM_FAULT_CLEAR & OC_TRIG_CLEAR_SW
+                    & OC_PWM_CENTRE_ALIGN /*TODO*/,
+                    OC_FAULT_MODE_CLEAR_SW & OC_PWM_FAULT_OUT_HIGH & OC_FAULT_PIN_UNCHANGE
+                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_TRIGGER_TIMER & OC_DIRN_TRIS & OC_SYNC_TRIG_IN_DISABLE,
+                    2000, 1000);
+            SetDCOC1PWM(100, 1500);
+            // Servo_1
+            //PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP87);
+            TRISEbits.TRISE7 = PIN_OUTPUT;
+            LATEbits.LATE7 = 1;
             
             break;
 

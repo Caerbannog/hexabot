@@ -21,4 +21,4 @@
  *******************************************************************/
 #include <system.h>
 
-#define LED_USB_DEVICE_STATE                    LED_D3
+#define LED_USB_DEVICE_STATE                    LED_G

@@ -29,7 +29,8 @@
 #include <stdint.h>
 #include <string.h>
 #include <stddef.h>
-
+#include <uart.h>
+#include <qei32.h>
 
 
 
@@ -73,6 +74,26 @@ void APP_Initialize()
 ********************************************************************/
 void APP_Tasks()
 {
+#if 0 // UART1 test
+    while (DataRdyUART1()) {
+        char c = getcUART1();
+        if (!BusyUART1()) {
+            WriteUART1(c);
+        }
+    }
+#endif
+    
+    int vel = Read32bitQEI1VelocityCounter();
+    if (vel != 0/* && vel != 1 && vel != -1*/) {
+        MetricsAppend(4, vel);
+    }
+    /*
+    int pos = Read32bitQEI1PositionCounter();
+    if (pos != 0) {
+        MetricsAppend(2, pos);
+    }
+    */
+    
     if (BUTTON_IsPressed(BUTTON_S1)) {
         //LOG("PRESSED S1");
         static int i = 0;

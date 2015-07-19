@@ -72,4 +72,6 @@ void SYSTEM_Initialize( SYSTEM_STATE state );
 //void SYSTEM_Tasks(void);
 #define SYSTEM_Tasks()
 
+#define Fcy 60000000
+
 #endif //SYSTEM_H

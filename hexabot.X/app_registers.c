@@ -65,6 +65,8 @@ const register_t registers[] = {
     REG_VAR(Ki),
     REG_VAR(Kd),
     // 25
+    REG_VAR(VEL1CNT),
+    REG_VAR(VEL2CNT),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

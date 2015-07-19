@@ -49,12 +49,12 @@
 MAIN_RETURN main(void)
 {
 #if 0 // Blink test
-    LED_Enable(LED_D1);
+    LED_Enable(LED_R);
     while(1) {
         unsigned int i;
         for (i = 0; i != 65535; i++) {
         }
-        LED_Toggle(LED_D1);
+        LED_Toggle(LED_R);
     }
 #endif
     
@@ -62,6 +62,10 @@ MAIN_RETURN main(void)
 
     USBDeviceInit();
     USBDeviceAttach();
+    
+    U1CNFG2bits.EXTI2CEN = 1;
+    RCFGCALbits.RTCEN = 0;
+    RCFGCALbits.RTCOE = 0;
     
     while(1)
     {

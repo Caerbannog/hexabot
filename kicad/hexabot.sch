@@ -1,5 +1,8 @@
 EESchema Schematic File Version 2
 LIBS:hexabot
+LIBS:power
+LIBS:device
+LIBS:conn
 LIBS:hexabot-cache
 EELAYER 25 0
 EELAYER END
@@ -463,7 +466,7 @@ F 3 "" H 5850 7300 60  0000 C CNN
 	1    5850 7300
 	1    0    0    -1  
 $EndComp
-Text Label 9750 5550 0    60   ~ 0
+Text Label 9750 5450 0    60   ~ 0
 MOTOR_R_PWM
 $Comp
 L R R18
@@ -493,7 +496,7 @@ Text Label 8600 3650 2    60   ~ 0
 AVSS
 Text Label 9750 5650 0    60   ~ 0
 MOTOR_R_DIR2
-Text Label 9750 5450 0    60   ~ 0
+Text Label 9750 5550 0    60   ~ 0
 MOTOR_R_DIR1
 Text Label 9750 5950 0    60   ~ 0
 MOTOR_L_PWM
@@ -1395,9 +1398,9 @@ S 11250 5350 750  500
 U 5578B32E
 F0 "DRIVER_R" 60
 F1 "driver.sch" 60
-F2 "DIR1" I L 11250 5450 60 
+F2 "DIR1" I L 11250 5550 60 
 F3 "DIR2" I L 11250 5650 60 
-F4 "PWM" I L 11250 5550 60 
+F4 "PWM" I L 11250 5450 60 
 F5 "SENSE" O R 12000 5650 60 
 F6 "OUT2" O R 12000 5550 60 
 F7 "OUT1" O R 12000 5450 60 

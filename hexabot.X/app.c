@@ -25,6 +25,7 @@
 #include <usb/usb.h>
 #include <system.h>
 #include <timer.h>
+#include <outcompare.h>
 
 #include <stdint.h>
 #include <string.h>
@@ -83,10 +84,14 @@ void APP_Tasks()
     }
 #endif
     
+#if 1
+    SetDCOC1PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
+    
     int vel = Read32bitQEI1VelocityCounter();
     if (vel != 0/* && vel != 1 && vel != -1*/) {
         MetricsAppend(4, vel);
     }
+#endif
     /*
     int pos = Read32bitQEI1PositionCounter();
     if (pos != 0) {

@@ -34,6 +34,8 @@ uint8_t echo_args[16] = {};
 uint8_t SPI_args[16] = {};
 uint8_t I2C_args[16] = {};
 
+uint8_t servo1 = 0;
+
 const register_t registers[] = {
     // 0
     REG_VAR(PORTA),
@@ -67,6 +69,7 @@ const register_t registers[] = {
     // 25
     REG_VAR(VEL1CNT),
     REG_VAR(VEL2CNT),
+    REG_VAR(servo1),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

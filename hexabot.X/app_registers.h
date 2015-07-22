@@ -33,6 +33,8 @@ extern const register_t registers[];
 extern const uint8_t register_count;
 extern const remote_prodecure_t procedures[];
 
+extern uint8_t servo1;
+
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
 #define PROC(var, proc)  { (uint8_t *)&(var), sizeof(var), proc }
 

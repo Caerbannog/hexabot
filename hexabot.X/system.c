@@ -32,6 +32,7 @@
 #include <qei32.h>
 #include <pps.h>
 #include <outcompare.h>
+#include <timer.h>
 #include <xc.h>
 
 /** CONFIGURATION Bits **********************************************/
@@ -137,15 +138,6 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             BUTTON_Enable(BUTTON_S1);
             BUTTON_Enable(BUTTON_S2);
             
-            
-            // FIXME: define macro to map pin in a single file
-            TRISDbits.TRISD8 = PIN_INPUT; // ENC_1_A
-            TRISDbits.TRISD9 = PIN_INPUT; // ENC_1_B
-            
-            TRISDbits.TRISD10 = PIN_INPUT; // ENC_2_A
-            TRISDbits.TRISD11 = PIN_INPUT; // ENC_2_B
-            // TODO enc 3-4
-            
             TRISE = 0x00; // FIXME: split servo and H-bridges
             
             // TODO BUMP et START
@@ -153,6 +145,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             // TODO H-bridge vsense
             // TODO dynamixel
             
+#if 1
             OpenUART1(UART_EN & UART_IDLE_STOP & UART_IrDA_DISABLE & UART_MODE_SIMPLEX
                     & UART_UEN_00 & UART_DIS_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD
                     & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_NO_PAR_8BIT & UART_1STOPBIT,
@@ -191,6 +184,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     & I2C1_ADDR_HOLD_DIS & I2C1_DATA_HOLD_DIS);
             */
             
+            // TODO: macro for Open32bitQEI2
             Open32bitQEI1(QEI_COUNTER_QEI_MODE & QEI_GATE_DISABLE & QEI_COUNT_POSITIVE
                     & QEI_INPUT_PRESCALE_1 & QEI_INDEX_MATCH_NO_EFFECT & QEI_POS_COUNT_INIT_No_EFFECT
                     & QEI_IDLE_CON /*TODO*/ & QEI_COUNTER_ENABLE,
@@ -201,17 +195,25 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     QEI_INDEX_INTERRUPT_DISABLE & QEI_HOME_INTERRUPT_DISABLE & QEI_VELO_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_INIT_INTERRUPT_DISABLE & QEI_POS_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_LESS_EQU_INTERRUPT_DISABLE & QEI_POS_GREAT_EQU_INTERRUPT_DISABLE);
-            /* TODO: bug ENC_1_B (RD9) stuck
-            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP72);
-            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP73);
+            //* ENC_1
+            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI72);
+            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI73);
+            //*/
+            /* ENC_2
+            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI74);
+            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI75);
             */
-            // ENC_2
-            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP74);
-            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP75);
+            /* ENC_3
+            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP67);
+            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP68);
+            */
+            /* ENC_4
+            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI96);
+            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP97);
+            */
             
-            // TODO: macro for Open32bitQEI2
 
-            /* TODO
+            // TODO
             OpenADC1(ADC_MODULE_ON & ADC_IDLE_STOP & ADC_ADDMABM_ORDER & ADC_AD12B_12BIT
                     & ADC_FORMAT_INTG & ADC_SSRC_MANUAL & ADC_AUTO_SAMPLING_ON & ADC_SIMULTANEOUS
                     & ADC_SAMP_ON,
@@ -221,22 +223,24 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     ADC_DMA_BUF_LOC_128,
                     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Set most pins to digital instead of analog.
                     SCAN_NONE_0_15, SCAN_NONE_16_31);
-            */
             
-            // TODO
-            OpenOC1(OC_IDLE_STOP & OC_SYSCLK_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
-                    & OC_FAULTC_IN_DISABLE & OC_PWM_FAULT_CLEAR & OC_TRIG_CLEAR_SW
-                    & OC_PWM_CENTRE_ALIGN /*TODO*/,
-                    OC_FAULT_MODE_CLEAR_SW & OC_PWM_FAULT_OUT_HIGH & OC_FAULT_PIN_UNCHANGE
-                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
-                    & OC_TRIGGER_TIMER & OC_DIRN_TRIS & OC_SYNC_TRIG_IN_DISABLE,
-                    2000, 1000);
-            SetDCOC1PWM(100, 1500);
-            // Servo_1
-            //PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP87);
+            OpenTimer4(T4_ON & T4_IDLE_STOP & T4_GATE_OFF & T4_PS_1_256 & T4_32BIT_MODE_OFF
+                       & T4_SOURCE_INT & T4_INT_PRIOR_0 & T4_INT_OFF, 20 * Fcy / 256 / 1000);
+            OpenOC1(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
+                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
+                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
+                    & OC_OUT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE /*TODO*/
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4 /**/,
+                    0, 0);
+            /* Servo_1
+            PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP87);
             TRISEbits.TRISE7 = PIN_OUTPUT;
-            LATEbits.LATE7 = 1;
+            /*/
+            PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP69); // HACK GPIO3
+            //*/
             
+            
+#endif
             break;
 
         case SYSTEM_STATE_USB_SUSPEND:

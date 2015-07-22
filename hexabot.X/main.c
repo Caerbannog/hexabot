@@ -63,9 +63,6 @@ MAIN_RETURN main(void)
     USBDeviceInit();
     USBDeviceAttach();
     
-    U1CNFG2bits.EXTI2CEN = 1;
-    RCFGCALbits.RTCEN = 0;
-    RCFGCALbits.RTCOE = 0;
     
     while(1)
     {

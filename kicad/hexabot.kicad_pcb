@@ -4527,7 +4527,7 @@
   (gr_text MOTOR_L (at 120 53) (layer F.SilkS)
     (effects (font (size 1.5 1.5) (thickness 0.3)))
   )
-  (gr_text ENC3 (at 135 48.75) (layer F.SilkS)
+  (gr_text ENC4 (at 135 48.75) (layer F.SilkS)
     (effects (font (size 1.5 1.5) (thickness 0.3)))
   )
   (gr_text ENC1 (at 108.5 82 90) (layer F.SilkS)

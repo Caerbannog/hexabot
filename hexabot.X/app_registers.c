@@ -34,7 +34,7 @@ uint8_t echo_args[16] = {};
 uint8_t SPI_args[16] = {};
 uint8_t I2C_args[16] = {};
 
-uint8_t servo1 = 0;
+uint8_t servo1 = 127;
 
 const register_t registers[] = {
     // 0

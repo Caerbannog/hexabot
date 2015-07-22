@@ -187,7 +187,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             // TODO: macro for Open32bitQEI2
             Open32bitQEI1(QEI_COUNTER_QEI_MODE & QEI_GATE_DISABLE & QEI_COUNT_POSITIVE
                     & QEI_INPUT_PRESCALE_1 & QEI_INDEX_MATCH_NO_EFFECT & QEI_POS_COUNT_INIT_No_EFFECT
-                    & QEI_IDLE_CON /*TODO*/ & QEI_COUNTER_ENABLE,
+                    & QEI_IDLE_STOP & QEI_COUNTER_ENABLE,
                     QEI_QEA_POL_NON_INVERTED & QEI_QEB_POL_NON_INVERTED & QEI_INDX_POL_NON_INVERTED
                     & QEI_HOM_POL_NON_INVERTED & QEI_QEA_QEB_NOT_SWAPPED
                     & QEI_COMPARE_HIGH_OUTPUT_DISABLE & QEI_DIF_FLTR_PRESCALE_1 & QEI_DIG_FLTR_DISABLE /*TODO*/
@@ -229,15 +229,12 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             OpenOC1(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
-                    & OC_OUT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE /*TODO*/
-                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4 /**/,
+                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4,
                     0, 0);
-            /* Servo_1
+            // Servo_1
             PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP87);
-            TRISEbits.TRISE7 = PIN_OUTPUT;
-            /*/
-            PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP69); // HACK GPIO3
-            //*/
+            // FIXME: pin servo2
             
             
 #endif

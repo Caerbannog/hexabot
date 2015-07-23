@@ -225,7 +225,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     SCAN_NONE_0_15, SCAN_NONE_16_31);
             
             OpenTimer4(T4_ON & T4_IDLE_STOP & T4_GATE_OFF & T4_PS_1_256 & T4_32BIT_MODE_OFF
-                       & T4_SOURCE_INT & T4_INT_PRIOR_0 & T4_INT_OFF, 20 * Fcy / 256 / 1000);
+                       & T4_SOURCE_INT & T4_INT_PRIOR_0 & T4_INT_OFF, 0.020 * Fcy / 256);
             OpenOC1(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
@@ -236,7 +236,27 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP87);
             // FIXME: pin servo2
             
-            
+            // Motors
+            OpenTimer5(T5_ON & T5_IDLE_STOP & T5_GATE_OFF & T5_PS_1_256 /*& T5_32BIT_MODE_OFF not applicable*/
+                       & T5_SOURCE_INT & T5_INT_PRIOR_0 & T5_INT_OFF, MOTOR_PWM_PERIOD);
+            OpenOC2(OC_IDLE_STOP & OC_TIMER5_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
+                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
+                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
+                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
+                    0, 0);
+            PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP80); // MOTOR_R_PWM
+            TRISEbits.TRISE1 = PIN_OUTPUT; // MOTOR_R_DIR1
+            TRISEbits.TRISE2 = PIN_OUTPUT; // MOTOR_R_DIR2
+            OpenOC3(OC_IDLE_STOP & OC_TIMER5_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
+                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
+                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
+                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
+                    0, 0);
+            PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP85); // MOTOR_L_PWM
+            TRISEbits.TRISE4 = PIN_OUTPUT; // MOTOR_L_DIR1
+            TRISEbits.TRISE6 = PIN_OUTPUT; // MOTOR_L_DIR2
 #endif
             break;
 

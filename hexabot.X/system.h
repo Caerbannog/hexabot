@@ -72,6 +72,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state );
 //void SYSTEM_Tasks(void);
 #define SYSTEM_Tasks()
 
-#define Fcy 60000000
+#define Fcy                60000000
+#define MOTOR_PWM_PERIOD   ((uint16_t)(0.0005 * Fcy / 256))
 
 #endif //SYSTEM_H

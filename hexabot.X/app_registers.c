@@ -36,6 +36,11 @@ uint8_t I2C_args[16] = {};
 
 uint8_t servo1 = 127;
 
+uint8_t motor_r_pwm = 127;
+uint8_t motor_r_dir = 1;
+uint8_t motor_l_pwm = 127;
+uint8_t motor_l_dir = 1;
+
 const register_t registers[] = {
     // 0
     REG_VAR(PORTA),
@@ -70,6 +75,11 @@ const register_t registers[] = {
     REG_VAR(VEL1CNT),
     REG_VAR(VEL2CNT),
     REG_VAR(servo1),
+    //28
+    REG_VAR(motor_r_pwm),
+    REG_VAR(motor_r_dir),
+    REG_VAR(motor_l_pwm),
+    REG_VAR(motor_l_dir),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

@@ -25,6 +25,7 @@
 #include <usb/usb.h>
 #include <leds.h>
 #include <buttons.h>
+
 #include <adc.h>
 #include <uart.h>
 #include <spi.h>
@@ -33,6 +34,7 @@
 #include <pps.h>
 #include <outcompare.h>
 #include <timer.h>
+
 #include <xc.h>
 
 /** CONFIGURATION Bits **********************************************/
@@ -80,6 +82,8 @@
 
 #define PIN_INPUT           1
 #define PIN_OUTPUT          0
+#define ENABLE_PULLUP       1
+#define ENABLE_PULDOWN      1
 
 
 /*********************************************************************
@@ -141,9 +145,17 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             TRISE = 0x00; // FIXME: split servo and H-bridges
             
             // TODO BUMP et START
-            // TODO soft pullup / down
             // TODO H-bridge vsense
             // TODO dynamixel
+            
+            
+            // Setup for pull-up and pull-down.
+            CNPUBbits.CNPUB13 = ENABLE_PULLUP; // START
+            CNPUBbits.CNPUB14 = ENABLE_PULLUP; // FIXME: DYNAMIXEL
+            CNPUCbits.CNPUC13 = ENABLE_PULLUP; // BUMP_1
+            CNPUCbits.CNPUC14 = ENABLE_PULLUP; // BUMP_2
+            CNPDDbits.CNPDD6  = ENABLE_PULDOWN; // PUSH_1
+            CNPDDbits.CNPDD7  = ENABLE_PULDOWN; // PUSH_2
             
 #if 1
             OpenUART1(UART_EN & UART_IDLE_STOP & UART_IrDA_DISABLE & UART_MODE_SIMPLEX
@@ -211,19 +223,23 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI96);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP97);
             */
+#endif
             
-
-            // TODO
             OpenADC1(ADC_MODULE_ON & ADC_IDLE_STOP & ADC_ADDMABM_ORDER & ADC_AD12B_12BIT
-                    & ADC_FORMAT_INTG & ADC_SSRC_MANUAL & ADC_AUTO_SAMPLING_ON & ADC_SIMULTANEOUS
-                    & ADC_SAMP_ON,
-                    ADC_VREF_AVDD_AVSS & ADC_SCAN_OFF & ADC_SELECT_CHAN_0 & ADC_ALT_BUF_OFF
-                    & ADC_ALT_INPUT_OFF,
+                    & ADC_FORMAT_INTG & ADC_SSRC_AUTO & ADC_AUTO_SAMPLING_ON & ADC_MULTIPLE
+                    & ADC_SAMP_OFF,
+                    ADC_VREF_AVDD_AVSS & ADC_SCAN_ON & ADC_SELECT_CHAN_0 & ADC_ALT_BUF_ON
+                    & ADC_ALT_INPUT_OFF & ADC_DMA_ADD_INC_4 /* Number of channels to scan. */,
                     ADC_SAMPLE_TIME_31 & ADC_CONV_CLK_INTERNAL_RC & ADC_CONV_CLK_256Tcy,
-                    ADC_DMA_BUF_LOC_128,
-                    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Set most pins to digital instead of analog.
-                    SCAN_NONE_0_15, SCAN_NONE_16_31);
+                    ADC_DMA_DIS & ADC_DMA_BUF_LOC_128,
+                    0, ENABLE_AN0_ANA | ENABLE_AN1_ANA | ENABLE_AN2_ANA | ENABLE_AN3_ANA, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Set most pins to digital instead of analog.
+                    SCAN_NONE_16_31,
+                    ENABLE_AN0_ANA | ENABLE_AN1_ANA | ENABLE_AN2_ANA | ENABLE_AN3_ANA);
             
+            //SetChanADC1(ADC_CH0_POS_SAMPLEA_AN0 & ADC_CH0_NEG_SAMPLEA_VREFN,
+            //            ADC_CH0_POS_SAMPLEA_AN0 & ADC_CH0_NEG_SAMPLEA_VREFN);
+
+#if 1
             OpenTimer4(T4_ON & T4_IDLE_STOP & T4_GATE_OFF & T4_PS_1_256 & T4_32BIT_MODE_OFF
                        & T4_SOURCE_INT & T4_INT_PRIOR_0 & T4_INT_OFF, 0.020 * Fcy / 256);
             OpenOC1(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE

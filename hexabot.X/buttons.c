@@ -32,17 +32,14 @@
 #define S1_TRIS  TRISDbits.TRISD6
 #define S2_TRIS  TRISDbits.TRISD7
 
-#define BUTTON_PRESSED      0
-#define BUTTON_NOT_PRESSED  1
+#define BUTTON_PRESSED      1
+#define BUTTON_NOT_PRESSED  0
 
 #define PIN_INPUT           1
 #define PIN_OUTPUT          0
 
 #define PIN_DIGITAL         0
 #define PIN_ANALOG          1
-
-#define BUTTON_PRESSED      0
-#define BUTTON_NOT_PRESSED  1
 
 /*********************************************************************
 * Function: bool BUTTON_IsPressed(BUTTON button);

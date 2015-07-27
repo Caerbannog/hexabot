@@ -103,9 +103,17 @@ class controller:
             
     
     def dump_metrics(self):
-        TIMER_FREQ = 256. / 70e6
+        TIMER_FREQ = 256. / 60e6
         
         fmt = struct.Struct('<LfB') # little-endian, uint32_t, float, uint8_t
+        
+        try:
+            while True: # Flush pending transfers to get accurate timings.
+                raw_metrics = self.dev.read(METRICS_IN_EP, METRICS_IN_SIZE,
+                                            interface=METRICS_INTERFACE,
+                                            timeout=1)
+        except:
+            pass # Assume timeout.
         
         reference_realtime = -1
         reference_timer = -1

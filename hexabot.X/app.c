@@ -84,7 +84,20 @@ void APP_Tasks()
     }
 #endif
     
-#if 1
+    static unsigned int i = 0;
+    i++;
+    if (i % 10000 == 0) {
+        if (_AD1IF) {
+            _AD1IF = 0;
+            MetricsAppend(0, ReadADC1(0));
+            MetricsAppend(1, ReadADC1(1));
+            MetricsAppend(2, ReadADC1(2));
+            MetricsAppend(3, ReadADC1(3));
+            MetricsAppend(4, ReadADC1(4));
+        }
+    }
+    
+#if 0
     SetDCOC1PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
     
     SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);

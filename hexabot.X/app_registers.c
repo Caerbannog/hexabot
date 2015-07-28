@@ -68,7 +68,7 @@ const register_t registers[] = {
     REG_VAR(TRISG),
     // 21
     REG_VAR(OC1RS), // MOTOR_R_PWM
-    REG_VAR(OC2RS), // MOTOR_R_PWM
+    REG_VAR(OC2RS), // MOTOR_L_PWM
     REG_VAR(OC3RS), // SERVO_1
     REG_VAR(OC4RS), // SERVO_2
     // 25

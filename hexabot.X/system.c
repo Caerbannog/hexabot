@@ -142,9 +142,8 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             BUTTON_Enable(BUTTON_S1);
             BUTTON_Enable(BUTTON_S2);
             
-            TRISE = 0x00; // FIXME: split servo and H-bridges
             
-            // TODO BUMP et START
+            // TODO BUMP et START sampling with debouncing
             // TODO H-bridge vsense
             
             
@@ -197,25 +196,34 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     & I2C1_ADDR_HOLD_DIS & I2C1_DATA_HOLD_DIS);
             */
             
-            // TODO: macro for Open32bitQEI2
             Open32bitQEI1(QEI_COUNTER_QEI_MODE & QEI_GATE_DISABLE & QEI_COUNT_POSITIVE
                     & QEI_INPUT_PRESCALE_1 & QEI_INDEX_MATCH_NO_EFFECT & QEI_POS_COUNT_INIT_No_EFFECT
                     & QEI_IDLE_STOP & QEI_COUNTER_ENABLE,
                     QEI_QEA_POL_NON_INVERTED & QEI_QEB_POL_NON_INVERTED & QEI_INDX_POL_NON_INVERTED
                     & QEI_HOM_POL_NON_INVERTED & QEI_QEA_QEB_NOT_SWAPPED
-                    & QEI_COMPARE_HIGH_OUTPUT_DISABLE & QEI_DIF_FLTR_PRESCALE_1 & QEI_DIG_FLTR_DISABLE /*TODO*/
+                    & QEI_COMPARE_HIGH_OUTPUT_DISABLE & QEI_DIF_FLTR_PRESCALE_1 & QEI_DIG_FLTR_DISABLE // FIXME: test filter with the same encoder on two QEIs with different config
                     & QEI_POS_COUNT_TRIG_DISABLE,
                     QEI_INDEX_INTERRUPT_DISABLE & QEI_HOME_INTERRUPT_DISABLE & QEI_VELO_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_INIT_INTERRUPT_DISABLE & QEI_POS_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_LESS_EQU_INTERRUPT_DISABLE & QEI_POS_GREAT_EQU_INTERRUPT_DISABLE);
+            Open32bitQEI2(QEI_COUNTER_QEI_MODE & QEI_GATE_DISABLE & QEI_COUNT_POSITIVE
+                    & QEI_INPUT_PRESCALE_1 & QEI_INDEX_MATCH_NO_EFFECT & QEI_POS_COUNT_INIT_No_EFFECT
+                    & QEI_IDLE_STOP & QEI_COUNTER_ENABLE,
+                    QEI_QEA_POL_NON_INVERTED & QEI_QEB_POL_NON_INVERTED & QEI_INDX_POL_NON_INVERTED
+                    & QEI_HOM_POL_NON_INVERTED & QEI_QEA_QEB_NOT_SWAPPED
+                    & QEI_COMPARE_HIGH_OUTPUT_DISABLE & QEI_DIF_FLTR_PRESCALE_1 & QEI_DIG_FLTR_DISABLE
+                    & QEI_POS_COUNT_TRIG_DISABLE,
+                    QEI_INDEX_INTERRUPT_DISABLE & QEI_HOME_INTERRUPT_DISABLE & QEI_VELO_OVERFLOW_INTERRUPT_DISABLE
+                    & QEI_POS_INIT_INTERRUPT_DISABLE & QEI_POS_OVERFLOW_INTERRUPT_DISABLE
+                    & QEI_POS_LESS_EQU_INTERRUPT_DISABLE & QEI_POS_GREAT_EQU_INTERRUPT_DISABLE); // Same config.
             //* ENC_1
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI72);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI73);
             //*/
-            /* ENC_2
-            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI74);
-            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI75);
-            */
+            //* ENC_2
+            PPSInput(IN_FN_PPS_QEA2, IN_PIN_PPS_RPI74);
+            PPSInput(IN_FN_PPS_QEB2, IN_PIN_PPS_RPI75);
+            //*/
             /* ENC_3
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP67);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP68);
@@ -244,7 +252,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
                     & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
-                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4,
                     0, 0);
             PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP80); // MOTOR_R_PWM
             TRISEbits.TRISE1 = PIN_OUTPUT; // MOTOR_R_DIR1
@@ -253,23 +261,28 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
                     & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
-                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
-                    0, 0);
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4,
+                    0, 0); // Same config.
             PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP85); // MOTOR_L_PWM
             TRISEbits.TRISE4 = PIN_OUTPUT; // MOTOR_L_DIR1
             TRISEbits.TRISE6 = PIN_OUTPUT; // MOTOR_L_DIR2
             
             // PWM for servos
-            OpenTimer5(T5_ON & T5_IDLE_STOP & T5_GATE_OFF & T5_PS_1_256 /*& T5_32BIT_MODE_OFF not applicable*/
+            OpenTimer5(T5_ON & T5_IDLE_STOP & T5_GATE_OFF & T5_PS_1_256 // T5_32BIT_MODE_OFF not applicable
                        & T5_SOURCE_INT & T5_INT_PRIOR_0 & T5_INT_OFF, 0.020 * Fcy / 256);
             OpenOC3(OC_IDLE_STOP & OC_TIMER5_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
                     & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
-                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4,
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
                     0, 0);
             PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP87); // SERVO_1
-            // TODO: macro for OpenOC4
+            OpenOC4(OC_IDLE_STOP & OC_TIMER5_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
+                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
+                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
+                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
+                    0, 0); // Same config.
             // HW FIXME: pin SERVO_2
             
             break;

@@ -101,11 +101,11 @@ void APP_Tasks()
 
 #if 0 // Motor test
     SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
-    LATEbits.LATE1 = motor_r_dir;
-    LATEbits.LATE2 = !motor_r_dir;
+    LATEbits.LATE1 = (motor_r_dir == 0);
+    LATEbits.LATE2 = (motor_r_dir != 0);
     SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
-    LATEbits.LATE4 = motor_l_dir;
-    LATEbits.LATE6 = !motor_l_dir;
+    LATEbits.LATE4 = (motor_l_dir == 0);
+    LATEbits.LATE6 = (motor_l_dir != 0);
 #endif
     
 #if 0 // Servo test

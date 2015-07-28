@@ -146,7 +146,6 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             
             // TODO BUMP et START
             // TODO H-bridge vsense
-            // TODO dynamixel
             
             
             // Setup for pull-up and pull-down.
@@ -157,7 +156,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             CNPDDbits.CNPDD6  = ENABLE_PULDOWN; // PUSH_1
             CNPDDbits.CNPDD7  = ENABLE_PULDOWN; // PUSH_2
             
-#if 1
+            // UART for debug
             OpenUART1(UART_EN & UART_IDLE_STOP & UART_IrDA_DISABLE & UART_MODE_SIMPLEX
                     & UART_UEN_00 & UART_DIS_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD
                     & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_NO_PAR_8BIT & UART_1STOPBIT,
@@ -166,8 +165,9 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     & UART_RX_OVERRUN_CLEAR,
                     Fcy / 16 / 115200 - 1);
             PPSInput(IN_FN_PPS_U1RX, IN_PIN_PPS_RP99);
-            PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP69); // HW HACK: TX is on GPIO3
+            //PPSOutput(OUT_FN_PPS_U1TX, OUT_PIN_PPS_RP69); // HW HACK: TX is on GPIO3
             
+            // UART for debug
             OpenUART2(UART_EN & UART_IDLE_STOP & UART_IrDA_DISABLE & UART_MODE_SIMPLEX
                     & UART_UEN_00 /*FIXME*/ & UART_DIS_WAKE & UART_DIS_LOOPBACK & UART_DIS_ABAUD
                     & UART_UXRX_IDLE_ONE & UART_BRGH_SIXTEEN & UART_NO_PAR_8BIT & UART_1STOPBIT,
@@ -175,10 +175,10 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     & UART_TX_ENABLE & UART_INT_RX_CHAR & UART_ADR_DETECT_DIS
                     & UART_RX_OVERRUN_CLEAR,
                     Fcy / 16 / 9600 - 1);
-            // FIXME: PPSInput(IN_FN_PPS_U2RX, IN_PIN_PPS_RP);
-            // FIXME: PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP);
+            // HW FIXME: PPSInput(IN_FN_PPS_U2RX, IN_PIN_PPS_RP);
+            // HW FIXME: PPSOutput(OUT_FN_PPS_U2TX, OUT_PIN_PPS_RP);
             
-            /* FIXME
+            /* FIXME: test SPI
             OpenSPI1(ENABLE_SCK_PIN & ENABLE_SDO_PIN & SPI_MODE16_OFF & SPI_SMP_OFF
                     & SPI_CKE_ON & SLAVE_ENABLE_OFF & CLK_POL_ACTIVE_LOW & MASTER_ENABLE_ON
                     & SEC_PRESCAL_1_1 & PRI_PRESCAL_1_1,
@@ -186,7 +186,8 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     & FIFO_BUFFER_DISABLE,
                     SPI_ENABLE & SPI_IDLE_STOP & SPI_RX_OVFLOW_CLR);
             */
-            /* FIXME
+            
+            /* FIXME: test I2C
             OpenI2C1(I2C1_ON & I2C1_IDLE_STOP & I2C1_CLK_REL & I2C1_IPMI_DIS & I2C1_7BIT_ADD
                     & I2C1_SLW_DIS & I2C1_SM_DIS & I2C1_GCALL_DIS & I2C1_STR_DIS
                     & I2C1_NACK & I2C1_ACK_DIS & I2C1_RCV_DIS & I2C1_STOP_DIS & I2C1_RESTART_DIS
@@ -223,57 +224,54 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI96);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP97);
             */
-#endif
             
+            // ADC continuous conversion
             OpenADC1(ADC_MODULE_ON & ADC_IDLE_STOP & ADC_ADDMABM_ORDER & ADC_AD12B_12BIT
                     & ADC_FORMAT_INTG & ADC_SSRC_AUTO & ADC_AUTO_SAMPLING_ON & ADC_MULTIPLE
                     & ADC_SAMP_OFF,
                     ADC_VREF_AVDD_AVSS & ADC_SCAN_ON & ADC_SELECT_CHAN_0 & ADC_ALT_BUF_ON
-                    & ADC_ALT_INPUT_OFF & ADC_DMA_ADD_INC_4 /* Number of channels to scan. */,
+                    & ADC_ALT_INPUT_OFF & ADC_DMA_ADD_INC_4, // Number of channels to scan.
                     ADC_SAMPLE_TIME_31 & ADC_CONV_CLK_INTERNAL_RC & ADC_CONV_CLK_256Tcy,
                     ADC_DMA_DIS & ADC_DMA_BUF_LOC_128,
-                    0, ENABLE_AN0_ANA | ENABLE_AN1_ANA | ENABLE_AN2_ANA | ENABLE_AN3_ANA, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Set most pins to digital instead of analog.
+                    0, ENABLE_AN1_ANA | ENABLE_AN2_ANA | ENABLE_AN3_ANA | ENABLE_AN4_ANA, 0, 0, 0, 0, 0, 0, 0, 0, 0, // Set most pins to digital instead of analog.
                     SCAN_NONE_16_31,
-                    ENABLE_AN0_ANA | ENABLE_AN1_ANA | ENABLE_AN2_ANA | ENABLE_AN3_ANA);
+                    ENABLE_AN1_ANA | ENABLE_AN2_ANA | ENABLE_AN3_ANA | ENABLE_AN4_ANA);
             
-            //SetChanADC1(ADC_CH0_POS_SAMPLEA_AN0 & ADC_CH0_NEG_SAMPLEA_VREFN,
-            //            ADC_CH0_POS_SAMPLEA_AN0 & ADC_CH0_NEG_SAMPLEA_VREFN);
-
-#if 1
+            // PWM for Motors
             OpenTimer4(T4_ON & T4_IDLE_STOP & T4_GATE_OFF & T4_PS_1_256 & T4_32BIT_MODE_OFF
-                       & T4_SOURCE_INT & T4_INT_PRIOR_0 & T4_INT_OFF, 0.020 * Fcy / 256);
+                       & T4_SOURCE_INT & T4_INT_PRIOR_0 & T4_INT_OFF, MOTOR_PWM_PERIOD);
             OpenOC1(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
+                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
+                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
+                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
+                    0, 0);
+            PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP80); // MOTOR_R_PWM
+            TRISEbits.TRISE1 = PIN_OUTPUT; // MOTOR_R_DIR1
+            TRISEbits.TRISE2 = PIN_OUTPUT; // MOTOR_R_DIR2
+            OpenOC2(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
+                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
+                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
+                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
+                    0, 0);
+            PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP85); // MOTOR_L_PWM
+            TRISEbits.TRISE4 = PIN_OUTPUT; // MOTOR_L_DIR1
+            TRISEbits.TRISE6 = PIN_OUTPUT; // MOTOR_L_DIR2
+            
+            // PWM for servos
+            OpenTimer5(T5_ON & T5_IDLE_STOP & T5_GATE_OFF & T5_PS_1_256 /*& T5_32BIT_MODE_OFF not applicable*/
+                       & T5_SOURCE_INT & T5_INT_PRIOR_0 & T5_INT_OFF, 0.020 * Fcy / 256);
+            OpenOC3(OC_IDLE_STOP & OC_TIMER5_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
                     & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
                     & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4,
                     0, 0);
-            // Servo_1
-            PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP87);
-            // FIXME: pin servo2
+            PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP87); // SERVO_1
+            // TODO: macro for OpenOC4
+            // HW FIXME: pin SERVO_2
             
-            // Motors
-            OpenTimer5(T5_ON & T5_IDLE_STOP & T5_GATE_OFF & T5_PS_1_256 /*& T5_32BIT_MODE_OFF not applicable*/
-                       & T5_SOURCE_INT & T5_INT_PRIOR_0 & T5_INT_OFF, MOTOR_PWM_PERIOD);
-            OpenOC2(OC_IDLE_STOP & OC_TIMER5_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
-                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
-                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
-                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
-                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
-                    0, 0);
-            PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP80); // MOTOR_R_PWM
-            TRISEbits.TRISE1 = PIN_OUTPUT; // MOTOR_R_DIR1
-            TRISEbits.TRISE2 = PIN_OUTPUT; // MOTOR_R_DIR2
-            OpenOC3(OC_IDLE_STOP & OC_TIMER5_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
-                    & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
-                    OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
-                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
-                    & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR5,
-                    0, 0);
-            PPSOutput(OUT_FN_PPS_OC3, OUT_PIN_PPS_RP85); // MOTOR_L_PWM
-            TRISEbits.TRISE4 = PIN_OUTPUT; // MOTOR_L_DIR1
-            TRISEbits.TRISE6 = PIN_OUTPUT; // MOTOR_L_DIR2
-#endif
             break;
 
         case SYSTEM_STATE_USB_SUSPEND:

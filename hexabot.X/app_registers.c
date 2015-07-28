@@ -43,7 +43,7 @@ uint8_t motor_l_dir = 1;
 
 const register_t registers[] = {
     // 0
-    REG_VAR(PORTA),
+    REG_VAR(PORTA), // Input.
     REG_VAR(PORTB),
     REG_VAR(PORTC),
     REG_VAR(PORTD),
@@ -51,7 +51,7 @@ const register_t registers[] = {
     REG_VAR(PORTF),
     REG_VAR(PORTG),
     // 7
-    REG_VAR(LATA),
+    REG_VAR(LATA), // Output.
     REG_VAR(LATB),
     REG_VAR(LATC),
     REG_VAR(LATD),
@@ -59,7 +59,7 @@ const register_t registers[] = {
     REG_VAR(LATF),
     REG_VAR(LATG),
     // 14
-    REG_VAR(TRISA),
+    REG_VAR(TRISA), // Pin direction.
     REG_VAR(TRISB),
     REG_VAR(TRISC),
     REG_VAR(TRISD),
@@ -67,15 +67,23 @@ const register_t registers[] = {
     REG_VAR(TRISF),
     REG_VAR(TRISG),
     // 21
-    REG_VAR(vbat),
+    REG_VAR(OC1RS), // MOTOR_R_PWM
+    REG_VAR(OC2RS), // MOTOR_R_PWM
+    REG_VAR(OC3RS), // SERVO_1
+    REG_VAR(OC4RS), // SERVO_2
+    // 25
+    REG_VAR(ADC1BUF0), // SENSE_R
+    REG_VAR(ADC1BUF1), // SENSE_L
+    REG_VAR(ADC1BUF2), // AN3
+    REG_VAR(ADC1BUF3), // VBAT
+    // 29
+    REG_VAR(POS1CNTL), // Low 16 bits of position counter for QEI1.
+    REG_VAR(POS2CNTL), // Same for QEI2.
+    // 31
     REG_VAR(Kp),
     REG_VAR(Ki),
     REG_VAR(Kd),
-    // 25
-    REG_VAR(VEL1CNT),
-    REG_VAR(VEL2CNT),
-    REG_VAR(servo1),
-    //28
+    // 34
     REG_VAR(motor_r_pwm),
     REG_VAR(motor_r_dir),
     REG_VAR(motor_l_pwm),

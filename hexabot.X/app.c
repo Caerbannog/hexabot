@@ -83,7 +83,8 @@ void APP_Tasks()
         }
     }
 #endif
-    
+
+#if 0 // ADC test
     static unsigned int i = 0;
     i++;
     if (i % 10000 == 0) {
@@ -96,28 +97,27 @@ void APP_Tasks()
             MetricsAppend(4, ReadADC1(4));
         }
     }
-    
-#if 0
-    SetDCOC1PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
-    
-    SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
+#endif
+
+#if 0 // Motor test
+    SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
     LATEbits.LATE1 = motor_r_dir;
     LATEbits.LATE2 = !motor_r_dir;
-    SetDCOC3PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
+    SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
     LATEbits.LATE4 = motor_l_dir;
     LATEbits.LATE6 = !motor_l_dir;
+#endif
     
+#if 0 // Servo test
+    SetDCOC3PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
+#endif
+
+#if 0 // QEI test
     int vel = Read32bitQEI1VelocityCounter();
-    if (vel != 0/* && vel != 1 && vel != -1*/) {
+    if (vel != 0) {
         MetricsAppend(4, vel);
     }
 #endif
-    /*
-    int pos = Read32bitQEI1PositionCounter();
-    if (pos != 0) {
-        MetricsAppend(2, pos);
-    }
-    */
     
     if (BUTTON_IsPressed(BUTTON_S1)) {
         //LOG("PRESSED S1");

@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Metrics Graph</title>
+<script src="d3.min.js"></script>
+<link type="text/css" rel="stylesheet" href="jquery-ui.min.css">
+<script src="jquery-2.1.4.min.js"></script>
+<script src="jquery-ui.min.js"></script>
+<script src="rickshaw.min.js"></script>
+<link rel="stylesheet" type="text/css" href="rickshaw.min.css">
+<style>
+#container {
+    margin-left: 10px;
+}
+#slider {
+    margin: 20px 0;
+}
+</style>
+</head>
+<body>
+<h1>Metrics Graph</h1>
+<div id="container">
+    <div id="chart"></div>
+    <div id="slider"></div>
+</div>
+<button onclick="test()">Test</button>
+<form>
+    <input id="message" type="text">
+</form>
+<script>
+
+var time = new Date().getTime() / 1000;
+var graph = new Rickshaw.Graph({
+    element: document.querySelector("#chart"),
+    width: 1000,
+    height: 500,
+    renderer: 'line',
+    interpolation: 'linear',
+    series: [
+	{ data: [ { x: time, y: 0 } ], color: 'steelblue' },
+	{ data: [ { x: time, y: 0 } ], color: 'lightblue' },
+	{ data: [ { x: time, y: 0 } ], color: 'lightgreen' },
+	{ data: [ { x: time, y: 0 } ], color: 'steelgreen' },
+    ]
+});
+
+graph.render();
+
+var hoverDetail = new Rickshaw.Graph.HoverDetail( {
+    graph: graph
+});
+
+var slider = new Rickshaw.Graph.RangeSlider({
+    graph: graph,
+    element: document.querySelector('#slider')
+});
+
+var xAxis = new Rickshaw.Graph.Axis.Time({
+    graph: graph
+});
+xAxis.render();
+
+var yAxis = new Rickshaw.Graph.Axis.Y({
+    graph: graph
+});
+yAxis.render();
+
+
+var socket = new WebSocket('ws://127.0.0.1:{{ws_port}}/');
+
+socket.onerror = function(e) {
+    console.error('onerror', e);
+};
+
+socket.onopen = function(e) {
+    console.log('onopen');
+};
+
+socket.onmessage = function(e) {
+    var msg = e.data;
+    console.log('onmessage', msg);
+    var lines = msg.split("\n");
+    for (var i in lines) {
+        var fields = lines[i].split(' ');
+        var point = { x: +fields[1], y: +fields[2] };
+	graph.series[+fields[0]].data.push(point);
+    }
+    graph.render();
+};
+
+function test() {
+    var t = new Date().getTime() / 1000;
+    socket.onmessage({data: "0 " + t + " " + 5 + "\n"
+	                  + "1 " + t + " " + 10 + "\n"
+	                  + "2 " + t + " " + 15});
+}
+
+$('form').submit(function(e) {
+    var msg = $('#message').val();
+    console.log('send', msg);
+    socket.send(msg);
+    $('#message').val('');
+    e.preventDefault();
+});
+</script>
+</body>
+</html>

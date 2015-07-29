@@ -118,7 +118,7 @@ class controller:
         reference_realtime = -1
         reference_timer = -1
         
-        with open('metrics.txt', 'a') as file_out:
+        with open('../metrics.txt', 'a') as file_out:
             while True:
                 try:
                     raw_metrics = self.dev.read(METRICS_IN_EP, METRICS_IN_SIZE,

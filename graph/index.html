@@ -11,10 +11,13 @@
 <link rel="stylesheet" type="text/css" href="rickshaw.min.css">
 <style>
 #container {
-    margin-left: 10px;
+    margin: 0 20px;
 }
 #slider {
     margin: 20px 0;
+}
+#chart {
+    width: 100%;
 }
 </style>
 </head>
@@ -33,15 +36,15 @@
 var time = new Date().getTime() / 1000;
 var graph = new Rickshaw.Graph({
     element: document.querySelector("#chart"),
-    width: 1000,
     height: 500,
+    min: 'auto',
     renderer: 'line',
     interpolation: 'linear',
     series: [
-	{ data: [ { x: time, y: 0 } ], color: 'steelblue' },
-	{ data: [ { x: time, y: 0 } ], color: 'lightblue' },
-	{ data: [ { x: time, y: 0 } ], color: 'lightgreen' },
-	{ data: [ { x: time, y: 0 } ], color: 'steelgreen' },
+        { data: [ { x: time, y: 0 } ], color: 'steelblue', name: 'abc' },
+        { data: [ { x: time, y: 0 } ], color: 'lightblue' },
+        { data: [ { x: time, y: 0 } ], color: 'lightgreen' },
+        { data: [ { x: time, y: 0 } ], color: 'steelgreen' },
     ]
 });
 
@@ -77,23 +80,29 @@ socket.onopen = function(e) {
     console.log('onopen');
 };
 
+var throttle = null;
 socket.onmessage = function(e) {
     var msg = e.data;
-    console.log('onmessage', msg);
     var lines = msg.split("\n");
     for (var i in lines) {
         var fields = lines[i].split(' ');
         var point = { x: +fields[1], y: +fields[2] };
-	graph.series[+fields[0]].data.push(point);
+        graph.series[+fields[0]].data.push(point);
     }
-    graph.render();
+    
+    if (throttle == null) {
+        throttle = setTimeout(function() {
+            throttle = null;
+            graph.render();
+        }, 50); // Don't refresh the graph faster for performance.
+    }
 };
 
 function test() {
     var t = new Date().getTime() / 1000;
     socket.onmessage({data: "0 " + t + " " + 5 + "\n"
-	                  + "1 " + t + " " + 10 + "\n"
-	                  + "2 " + t + " " + 15});
+                      + "1 " + t + " " + 10 + "\n"
+                      + "2 " + t + " " + 15});
 }
 
 $('form').submit(function(e) {

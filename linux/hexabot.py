@@ -138,6 +138,7 @@ class controller:
                         line = "%d %f %.2f" % (m_id, realtime, m_value)
                         print(line)
                         file_out.write(line + "\n")
+                        file_out.flush()
                 except KeyboardInterrupt:
                     return
                 except usb.core.USBError as e:

@@ -97,8 +97,8 @@ class FileEventHandler(pyinotify.ProcessEvent):
 
 if __name__ == '__main__':
 
-    threading.Thread(target=monitoring_loop).start() # Monitoring loop for inotify
-    threading.Thread(target=bottle.run).start()
+    threading.Thread(target=monitoring_loop, daemon=True).start() # Monitoring loop for inotify
+    threading.Thread(target=bottle.run, daemon=True).start()
 
     factory = BroadcastServerFactory("ws://localhost:%d" % WS_PORT)
     factory.protocol = MetricsProtocol

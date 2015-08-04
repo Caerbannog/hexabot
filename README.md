@@ -20,7 +20,7 @@ For Ubuntu 15.04 you can run:
 ```bash
 git clone https://github.com/Caerbannog/hexabot.git
 sudo apt-get install python3-pip wireshark
-sudo pip3 install pyusb==1.0.0b1 autobahn==0.10.4 pyinotify==0.9.6
+sudo pip3 install pyusb==1.0.0b1 autobahn==0.10.4 pyinotify==0.9.6 bottle==0.12.8
 sudo adduser $USER dialout
 sudo adduser $USER wireshark
 echo usbmon | sudo tee -a /etc/modules

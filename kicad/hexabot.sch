@@ -2928,4 +2928,6 @@ Wire Wire Line
 Wire Wire Line
 	3150 7500 3150 7000
 Connection ~ 3150 7000
+Text Notes 2500 4900 0    60   ~ 0
+TODO: capture SENSE_* reworks
 $EndSCHEMATC

@@ -84,22 +84,26 @@ void APP_Tasks()
     }
 #endif
 
-#if 0 // ADC test
+#if 1 // ADC test
     static unsigned int i = 0;
     i++;
-    if (i % 10000 == 0) {
+    if (i >= 5000) { // FIXME: read a timer instead
+        i = 0;
         if (_AD1IF) {
             _AD1IF = 0;
-            MetricsAppend(0, ReadADC1(0));
-            MetricsAppend(1, ReadADC1(1));
-            MetricsAppend(2, ReadADC1(2));
-            MetricsAppend(3, ReadADC1(3));
-            MetricsAppend(4, ReadADC1(4));
+            // TODO: aliasing problem? when the PWM is off, the voltage is useless
+            //       solution: either sample when PWM is on, or add a low pass filter on VSENSE
+            // TODO: sensitivity problem, need higher resistance
+            MetricsAppend(METRIC_SENSE_R, ReadADC1(0));
+            MetricsAppend(METRIC_SENSE_L, ReadADC1(1));
+            MetricsAppend(METRIC_AN3,     ReadADC1(2));
+            MetricsAppend(METRIC_VBAT,    ReadADC1(3));
         }
     }
 #endif
 
-#if 0 // Motor test
+#if 1 // Motor test
+    // FIXME: turn OFF motors when USB link is broken: heartbeat ?
     SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
     LATEbits.LATE1 = (motor_r_dir == 0);
     LATEbits.LATE2 = (motor_r_dir != 0);

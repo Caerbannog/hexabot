@@ -41,10 +41,11 @@ var graph = new Rickshaw.Graph({
     renderer: 'line',
     interpolation: 'linear',
     series: [
-        { data: [ { x: time, y: 0 } ], color: 'steelblue', name: 'abc' },
-        { data: [ { x: time, y: 0 } ], color: 'lightblue' },
-        { data: [ { x: time, y: 0 } ], color: 'lightgreen' },
-        { data: [ { x: time, y: 0 } ], color: 'steelgreen' },
+        { data: [ { x: time, y: 0 } ], color: 'rgba(255,100,100,.8)', name: 'SENSE_R' },
+        { data: [ { x: time, y: 0 } ], color: 'rgba(100,255,100,.8)', name: 'SENSE_L'},
+        { data: [ { x: time, y: 0 } ], color: 'rgba(100,100,255,.8)', name: 'AN3'},
+        { data: [ { x: time, y: 0 } ], color: 'rgba(200,200,100,.8)', name: 'VBAT'},
+        { data: [ { x: time, y: 0 } ], color: 'rgba(100,200,200,.8)'},
     ]
 });
 
@@ -64,6 +65,7 @@ var xAxis = new Rickshaw.Graph.Axis.Time({
 });
 xAxis.render();
 
+// FIXME: dynamic scales for each graph
 var yAxis = new Rickshaw.Graph.Axis.Y({
     graph: graph
 });

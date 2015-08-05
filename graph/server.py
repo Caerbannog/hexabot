@@ -60,7 +60,7 @@ class BroadcastServerFactory(WebSocketServerFactory):
             self.clients.remove(client)
 
     def broadcast(self, msg):
-        print("broadcasting message '{}'".format(msg))
+        #print("broadcasting message '{}'".format(msg))
         for c in self.clients:
             c.sendMessage(msg.encode('utf8'))
 

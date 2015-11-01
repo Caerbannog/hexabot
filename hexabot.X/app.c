@@ -34,6 +34,7 @@
 #include <qei32.h>
 
 
+#include <stdlib.h>
 
 /** VARIABLES ******************************************************/
 
@@ -84,7 +85,7 @@ void APP_Tasks()
     }
 #endif
 
-#if 1 // ADC test
+#if 0 // ADC test
     static unsigned int i = 0;
     i++;
     if (i >= 5000) { // FIXME: read a timer instead
@@ -116,10 +117,34 @@ void APP_Tasks()
     SetDCOC3PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
 #endif
 
-#if 0 // QEI test
-    int vel = Read32bitQEI1VelocityCounter();
-    if (vel != 0) {
-        MetricsAppend(4, vel);
+#if 1 // QEI test
+    int vel1 = Read32bitQEI1VelocityCounter();
+    int vel2 = Read32bitQEI2VelocityCounter();
+    if (vel1 != 0) {
+        MetricsAppend(4, vel1);
+    }
+    if (vel2 != 0) {
+        MetricsAppend(5, vel2);
+    }
+#endif
+
+#if 1 // Joystick test
+    if (r_target_speed > 0) {
+        motor_r_dir = 1;
+        motor_r_pwm = r_target_speed << 2;
+    }
+    else {
+        motor_r_dir = 0;
+        motor_r_pwm = (127 - r_target_speed) << 2;
+    }
+    
+    if (l_target_speed > 0) {
+        motor_l_dir = 1;
+        motor_l_pwm = l_target_speed << 2;
+    }
+    else {
+        motor_l_dir = 0;
+        motor_l_pwm = (127 - l_target_speed) << 2;
     }
 #endif
     

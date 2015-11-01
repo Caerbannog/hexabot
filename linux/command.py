@@ -5,7 +5,6 @@
 
 import hexabot
 import sys
-import ast
 
 
 if __name__ == "__main__":

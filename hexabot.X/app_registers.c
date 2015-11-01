@@ -20,9 +20,9 @@
 #include <xc.h>
 
 #ifndef PORTA // 806 dsPIC
-uint8_t PORTA = 0;
-uint8_t LATA  = 0;
-uint8_t TRISA = 0;
+uint16_t PORTA = 0;
+uint16_t LATA  = 0;
+uint16_t TRISA = 0;
 #endif
 
 uint16_t vbat = 0;
@@ -40,6 +40,9 @@ uint8_t motor_r_pwm = 127;
 uint8_t motor_r_dir = 1;
 uint8_t motor_l_pwm = 127;
 uint8_t motor_l_dir = 1;
+
+int8_t r_target_speed = 0;
+int8_t l_target_speed = 0;
 
 const register_t registers[] = {
     // 0
@@ -88,6 +91,9 @@ const register_t registers[] = {
     REG_VAR(motor_r_dir),
     REG_VAR(motor_l_pwm),
     REG_VAR(motor_l_dir),
+    // 38
+    REG_VAR(r_target_speed),
+    REG_VAR(l_target_speed),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

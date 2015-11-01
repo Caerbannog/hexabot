@@ -38,6 +38,8 @@ extern uint8_t motor_r_pwm;
 extern uint8_t motor_r_dir;
 extern uint8_t motor_l_pwm;
 extern uint8_t motor_l_dir;
+extern int8_t r_target_speed;
+extern int8_t l_target_speed;
 
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }

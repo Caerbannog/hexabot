@@ -49,6 +49,7 @@
       <itemPath>system.c</itemPath>
       <itemPath>app.c</itemPath>
       <itemPath>app_registers.c</itemPath>
+      <itemPath>interrupts.c</itemPath>
     </logicalFolder>
     <itemPath>Makefile</itemPath>
   </logicalFolder>

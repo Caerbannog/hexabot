@@ -43,7 +43,13 @@ uint8_t motor_l_dir = 1;
 
 float r_target_speed = 0;
 float l_target_speed = 0;
+float r_control_speed = 0;
+float l_control_speed = 0;
 float control_loop_interval = .01;
+
+unsigned long qei3_position = 0;
+unsigned long qei4_position = 0;
+
 
 const register_t registers[] = {
     // 0
@@ -95,8 +101,13 @@ const register_t registers[] = {
     // 38
     REG_VAR(r_target_speed),
     REG_VAR(l_target_speed),
-    // 40
+    REG_VAR(r_control_speed),
+    REG_VAR(l_control_speed),
+    // 42
     REG_VAR(control_loop_interval),
+    // 43
+    REG_VAR(qei3_position),
+    REG_VAR(qei4_position),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

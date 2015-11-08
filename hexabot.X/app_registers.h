@@ -43,7 +43,12 @@ extern uint8_t motor_l_pwm;
 extern uint8_t motor_l_dir;
 extern float r_target_speed;
 extern float l_target_speed;
+extern float r_control_speed;
+extern float l_control_speed;
 extern float control_loop_interval;
+
+extern unsigned long qei3_position;
+extern unsigned long qei4_position;
 
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }

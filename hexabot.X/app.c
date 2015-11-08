@@ -106,16 +106,6 @@ void APP_Tasks()
         }
     }
 #endif
-
-#if 1 // Motor test
-    // FIXME: turn OFF motors when USB link is broken: heartbeat ?
-    SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
-    LATEbits.LATE1 = (motor_r_dir == 0);
-    LATEbits.LATE2 = (motor_r_dir != 0);
-    SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
-    LATEbits.LATE4 = (motor_l_dir == 0);
-    LATEbits.LATE6 = (motor_l_dir != 0);
-#endif
     
 #if 0 // Servo test
     SetDCOC3PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
@@ -127,8 +117,6 @@ void APP_Tasks()
 #endif
 
 #if 1 // PID test
-    static float r_control_speed = 0;
-    static float l_control_speed = 0;
     
     static unsigned long last_time_asserv = 0;
     unsigned long new_time_asserv = ReadTimer23();
@@ -184,7 +172,7 @@ void APP_Tasks()
             l_speed_err_I = -0.999;
         }
         
-        //*
+        /*
         MetricsAppend(0, ticks_l);
         MetricsAppend(1, l_target_speed);
         MetricsAppend(2, l_speed);
@@ -215,6 +203,16 @@ void APP_Tasks()
     if (pwm_l > 255)
         pwm_l = 255;
     motor_l_pwm = 255 - pwm_l;
+#endif
+
+#if 1 // Motor test
+    // FIXME: turn OFF motors when USB link is broken: heartbeat ?
+    SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
+    LATEbits.LATE1 = (motor_r_dir == 0);
+    LATEbits.LATE2 = (motor_r_dir != 0);
+    SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
+    LATEbits.LATE4 = (motor_l_dir == 0);
+    LATEbits.LATE6 = (motor_l_dir != 0);
 #endif
     
     if (BUTTON_IsPressed(BUTTON_S1)) {

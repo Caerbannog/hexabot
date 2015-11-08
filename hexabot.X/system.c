@@ -34,6 +34,7 @@
 #include <pps.h>
 #include <outcompare.h>
 #include <timer.h>
+#include <ports.h>
 
 #include <xc.h>
 
@@ -146,6 +147,24 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             // TODO BUMP et START sampling with debouncing
             // TODO H-bridge vsense
             
+            // Change notification interrupts for software QEI.
+            ConfigIntCNPortD(CHANGE_INT_ON & CHANGE_INT_PRI_0 & 0xFFFFFFFF);
+            ConfigIntCNPortF(CHANGE_INT_ON & CHANGE_INT_PRI_0 & 0xFFFFFFFF); // Most likely redundant.
+#if 1
+            // ENC1
+            EnableCND8;
+            EnableCND9;
+            // ENC3
+            EnableCND3;
+            EnableCND4;
+#else
+            // ENC2 MOTOR_R
+            EnableCND10;
+            EnableCND11;
+            // ENC4 MOTOR_L
+            EnableCNF0;
+            EnableCNF1;
+#endif
             
             // Setup for pull-up and pull-down.
             CNPUBbits.CNPUB13 = ENABLE_PULLUP; // START
@@ -220,7 +239,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI72);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI73);
             //*/
-            //* ENC_2
+            //* ENC_2 MOTOR_R
             PPSInput(IN_FN_PPS_QEA2, IN_PIN_PPS_RPI74);
             PPSInput(IN_FN_PPS_QEB2, IN_PIN_PPS_RPI75);
             //*/
@@ -228,7 +247,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP67);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP68);
             //*/
-            //* ENC_4
+            //* ENC_4 MOTOR_L
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI96);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP97);
             //*/

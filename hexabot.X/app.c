@@ -59,8 +59,11 @@ void APP_Initialize()
     MetricsInitEP();
     IsochronousInitEP();
     OpenTimer23(T2_ON & T2_IDLE_STOP & T2_GATE_OFF & T2_PS_1_256 & T2_32BIT_MODE_ON
-               & T2_SOURCE_INT & T2_INT_PRIOR_0 & T2_INT_OFF, 0xFFFFFFFF); // Will overflow after 4 hours.
+               & T2_SOURCE_INT & T2_INT_PRIOR_0 & T2_INT_OFF, 0xFFFFFFFF); // Will overflow after 5.09 hours (prescaler * period / fcy / 3600).
 }
+#define TIMER23_TICK_S          (256 /*prescaler*/ / (float)Fcy)
+#define MOTOR_TICKS_PER_METER   57000 // Approximate
+// encoder ticks per motor turn 6.25*500 = 3125, belt ratio=?
 
 /*********************************************************************
 * Overview: Keeps the demo running.
@@ -117,7 +120,25 @@ void APP_Tasks()
     SetDCOC3PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
 #endif
 
-#if 1 // QEI test
+#if 0 // Watch absolute encoder values.
+    MetricsAppend(7, Read32bitQEI1PositionCounter());
+    MetricsAppend(7, Read32bitQEI2PositionCounter());
+#endif
+    
+#if 1 // PID test
+    static unsigned long last_time_asserv = 0;
+    unsigned long new_time_asserv = ReadTimer23();
+    float elapsed_asserv = (float)(new_time_asserv - last_time_asserv) * TIMER23_TICK_S;
+    if (elapsed_asserv > 0.1) { // Update asserv
+        last_time_asserv = new_time_asserv;
+        
+        unsigned int ticks_r = Read32bitQEI1VelocityCounter();
+        float speed_r = (*(int*)&ticks_r) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
+        speed_r = speed_r;
+        //MetricsAppend(7, ticks_r);
+        MetricsAppend(8, speed_r);
+    }
+#elif 0 // QEI test
     int vel1 = Read32bitQEI1VelocityCounter();
     int vel2 = Read32bitQEI2VelocityCounter();
     if (vel1 != 0) {
@@ -128,24 +149,18 @@ void APP_Tasks()
     }
 #endif
 
-#if 1 // Joystick test
-    if (r_target_speed > 0) {
-        motor_r_dir = 1;
-        motor_r_pwm = r_target_speed << 2;
-    }
-    else {
-        motor_r_dir = 0;
-        motor_r_pwm = (127 - r_target_speed) << 2;
-    }
+#if 1 // Joystick test without feedback
+    motor_r_dir = (r_target_speed >= 0);
+    int pwm_r = abs(r_target_speed * 255);
+    if (pwm_r > 255)
+        pwm_r = 255;
+    motor_r_pwm = 255 - pwm_r;
     
-    if (l_target_speed > 0) {
-        motor_l_dir = 0;
-        motor_l_pwm = (127 - l_target_speed) << 2;
-    }
-    else {
-        motor_l_dir = 1;
-        motor_l_pwm = l_target_speed << 2;
-    }
+    motor_l_dir = (l_target_speed < 0); // Reversed because motors are in opposite directions.
+    int pwm_l = abs(l_target_speed * 255);
+    if (pwm_l > 255)
+        pwm_l = 255;
+    motor_l_pwm = 255 - pwm_l;
 #endif
     
     if (BUTTON_IsPressed(BUTTON_S1)) {

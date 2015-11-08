@@ -139,12 +139,12 @@ void APP_Tasks()
     }
     
     if (l_target_speed > 0) {
-        motor_l_dir = 1;
-        motor_l_pwm = l_target_speed << 2;
-    }
-    else {
         motor_l_dir = 0;
         motor_l_pwm = (127 - l_target_speed) << 2;
+    }
+    else {
+        motor_l_dir = 1;
+        motor_l_pwm = l_target_speed << 2;
     }
 #endif
     

@@ -34,12 +34,16 @@ extern const uint8_t register_count;
 extern const remote_prodecure_t procedures[];
 
 extern uint8_t servo1;
+extern float KP;
+extern float KI;
+extern float KD;
 extern uint8_t motor_r_pwm;
 extern uint8_t motor_r_dir;
 extern uint8_t motor_l_pwm;
 extern uint8_t motor_l_dir;
 extern float r_target_speed;
 extern float l_target_speed;
+extern float control_loop_interval;
 
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }

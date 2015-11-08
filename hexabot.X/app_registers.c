@@ -26,9 +26,9 @@ uint16_t TRISA = 0;
 #endif
 
 uint16_t vbat = 0;
-float Kp = 0;
-float Ki = 0;
-float Kd = 0;
+float KP = 1.4; // 1/(m/s)
+float KI = 1.0;
+float KD = 0;
 
 uint8_t echo_args[16] = {};
 uint8_t SPI_args[16] = {};
@@ -43,6 +43,7 @@ uint8_t motor_l_dir = 1;
 
 float r_target_speed = 0;
 float l_target_speed = 0;
+float control_loop_interval = .01;
 
 const register_t registers[] = {
     // 0
@@ -83,9 +84,9 @@ const register_t registers[] = {
     REG_VAR(POS1CNTL), // Low 16 bits of position counter for QEI1.
     REG_VAR(POS2CNTL), // Same for QEI2.
     // 31
-    REG_VAR(Kp),
-    REG_VAR(Ki),
-    REG_VAR(Kd),
+    REG_VAR(KP),
+    REG_VAR(KI),
+    REG_VAR(KD),
     // 34
     REG_VAR(motor_r_pwm),
     REG_VAR(motor_r_dir),
@@ -94,6 +95,8 @@ const register_t registers[] = {
     // 38
     REG_VAR(r_target_speed),
     REG_VAR(l_target_speed),
+    // 40
+    REG_VAR(control_loop_interval),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

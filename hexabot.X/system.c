@@ -216,7 +216,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     QEI_INDEX_INTERRUPT_DISABLE & QEI_HOME_INTERRUPT_DISABLE & QEI_VELO_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_INIT_INTERRUPT_DISABLE & QEI_POS_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_LESS_EQU_INTERRUPT_DISABLE & QEI_POS_GREAT_EQU_INTERRUPT_DISABLE); // Same config.
-            //* ENC_1
+            /* ENC_1
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI72);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI73);
             //*/
@@ -227,11 +227,11 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             /* ENC_3
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP67);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP68);
-            */
-            /* ENC_4
+            //*/
+            //* ENC_4
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI96);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP97);
-            */
+            //*/
             
             // ADC continuous conversion
             OpenADC1(ADC_MODULE_ON & ADC_IDLE_STOP & ADC_ADDMABM_ORDER & ADC_AD12B_12BIT

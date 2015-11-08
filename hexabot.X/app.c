@@ -64,6 +64,7 @@ void APP_Initialize()
 #define TIMER23_TICK_S          (256 /*prescaler*/ / (float)Fcy)
 #define MOTOR_TICKS_PER_METER   57000 // Approximate
 // encoder ticks per motor turn 6.25*500 = 3125, belt ratio=?
+#define REVERSED_MOTOR   (-1) // Reversed because motors are in opposite directions.
 
 /*********************************************************************
 * Overview: Keeps the demo running.
@@ -124,19 +125,72 @@ void APP_Tasks()
     MetricsAppend(7, Read32bitQEI1PositionCounter());
     MetricsAppend(7, Read32bitQEI2PositionCounter());
 #endif
-    
+
 #if 1 // PID test
+    static float r_control_speed = 0;
+    static float l_control_speed = 0;
+    
     static unsigned long last_time_asserv = 0;
     unsigned long new_time_asserv = ReadTimer23();
     float elapsed_asserv = (float)(new_time_asserv - last_time_asserv) * TIMER23_TICK_S;
-    if (elapsed_asserv > 0.1) { // Update asserv
+    if (elapsed_asserv > control_loop_interval) { // Update asserv
         last_time_asserv = new_time_asserv;
         
-        unsigned int ticks_r = Read32bitQEI1VelocityCounter();
-        float speed_r = (*(int*)&ticks_r) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
-        speed_r = speed_r;
-        //MetricsAppend(7, ticks_r);
-        MetricsAppend(8, speed_r);
+        unsigned int ticks_r = Read32bitQEI2VelocityCounter();
+        float r_speed = (*(int*)&ticks_r) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
+        
+        static float r_speed_err_P_previous = 0;
+        static float r_speed_err_I = 0;
+        
+        float r_speed_err_P = r_target_speed - r_speed;
+        float r_speed_err_D = (r_speed_err_P - r_speed_err_P_previous) / elapsed_asserv;
+        
+        r_speed_err_P_previous = r_speed_err_P;
+        
+        r_control_speed = r_speed_err_P * KP + r_speed_err_I * KI + r_speed_err_D * KD;
+        r_speed_err_I += r_speed_err_P * elapsed_asserv;
+        if (r_speed_err_I * KI > 0.999) { // Arbitrary threshold. The integrate error shouldn't accumulate to infinity.
+            r_speed_err_I = 0.999;
+        }
+        else if (r_speed_err_I * KI < -0.999) {
+            r_speed_err_I = -0.999;
+        }
+        
+        /*
+        MetricsAppend(0, ticks_r);
+        MetricsAppend(1, r_target_speed);
+        MetricsAppend(2, r_speed);
+        MetricsAppend(3, r_speed_err_P);
+        MetricsAppend(4, r_control_speed);
+        //*/
+        
+        unsigned int ticks_l = Read32bitQEI1VelocityCounter();
+        float l_speed = (REVERSED_MOTOR * *(int*)&ticks_l) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
+        
+        static float l_speed_err_P_previous = 0;
+        static float l_speed_err_I = 0;
+        
+        float l_speed_err_P = l_target_speed - l_speed;
+        float l_speed_err_D = (l_speed_err_P - l_speed_err_P_previous) / elapsed_asserv;
+        
+        l_speed_err_P_previous = l_speed_err_P;
+        
+        l_control_speed = l_speed_err_P * KP + l_speed_err_I * KI + l_speed_err_D * KD;
+        l_speed_err_I += l_speed_err_P * elapsed_asserv;
+        if (l_speed_err_I * KI > 0.999) { // Arbitrary threshold. The integrate error shouldn't accumulate to infinity.
+            l_speed_err_I = 0.999;
+        }
+        else if (l_speed_err_I * KI < -0.999) {
+            l_speed_err_I = -0.999;
+        }
+        
+        //*
+        MetricsAppend(0, ticks_l);
+        MetricsAppend(1, l_target_speed);
+        MetricsAppend(2, l_speed);
+        MetricsAppend(3, l_speed_err_P);
+        MetricsAppend(4, l_control_speed);
+        //*/
     }
 #elif 0 // QEI test
     int vel1 = Read32bitQEI1VelocityCounter();
@@ -150,14 +204,14 @@ void APP_Tasks()
 #endif
 
 #if 1 // Joystick test without feedback
-    motor_r_dir = (r_target_speed >= 0);
-    int pwm_r = abs(r_target_speed * 255);
+    motor_r_dir = (r_control_speed < 0); // REVERSED_MOTOR
+    int pwm_r = abs(r_control_speed * 255);
     if (pwm_r > 255)
         pwm_r = 255;
     motor_r_pwm = 255 - pwm_r;
     
-    motor_l_dir = (l_target_speed < 0); // Reversed because motors are in opposite directions.
-    int pwm_l = abs(l_target_speed * 255);
+    motor_l_dir = (l_control_speed >= 0);
+    int pwm_l = abs(l_control_speed * 255);
     if (pwm_l > 255)
         pwm_l = 255;
     motor_l_pwm = 255 - pwm_l;

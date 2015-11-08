@@ -8,6 +8,7 @@ import usb.util
 import usb.control
 import time
 import struct
+import array
 
 
 CDC_CONTROL_INTERFACE = 0
@@ -49,7 +50,20 @@ class controller:
     def send_command(self, cmd):
         """Command format: length of payload (1 byte), payload (n bytes), null (1 byte)
            Command payload: """
-        cmd = [len(cmd)] + cmd + [0] # Add len header and terminating null byte
+        
+        # Replace floats by their byte representation.
+        cmd_bytes = array.array('B')
+        for c in cmd:
+            if isinstance(c, int):
+                cmd_bytes.append(c)
+            elif isinstance(c, float):
+                cmd_bytes.fromstring(struct.pack('f', c)) # Float on four bytes.
+            else:
+                raise ValueError("Unexpected type %s for arg %s" % (type(c), c))
+        cmd = cmd_bytes
+        
+        cmd.insert(0, len(cmd)) # Add len header
+        cmd.append(0) # Add terminating null byte
         
         if len(cmd) >= COMMAND_OUT_SIZE:
             raise Exception('Command too long %s' % cmd)

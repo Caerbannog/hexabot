@@ -17,15 +17,6 @@ if __name__ == "__main__":
     
     args = [ eval(i) for i in sys.argv[1:]] # Convert logical expressions and hexadecimal
     
-    arg_bytes = []
-    for b in args:
-        if isinstance(b, int):
-            arg_bytes.append(b)
-        elif isinstance(b, float):
-            arg_bytes += list(struct.pack('f', b)) # Float on four bytes.
-        else:
-            raise ValueError("Unexpected type %s for arg %s" % (type(b), b))
-    
-    dev.send_command(arg_bytes)
+    dev.send_command(args)
     answer = dev.receive_command()
     print(' '.join([format(i, '02x') for i in answer]))

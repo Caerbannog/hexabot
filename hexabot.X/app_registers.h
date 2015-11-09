@@ -47,9 +47,10 @@ extern float r_control_speed;
 extern float l_control_speed;
 extern float control_loop_interval;
 
-extern unsigned long qei3_position;
-extern unsigned long qei4_position;
-
+volatile extern unsigned long qei3_position;
+volatile extern unsigned long qei4_position;
+volatile extern unsigned int qei3_errors;
+volatile extern unsigned int qei4_errors;
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
 #define PROC(var, proc)  { (uint8_t *)&(var), sizeof(var), proc }

@@ -80,8 +80,9 @@
 /* Interrupt Routines                                                         */
 /******************************************************************************/
 
+#define ERR   3
 
-const char soft_qei__lut[16] = {
+const char soft_qei_lut[16] = {
 // http://electronics.stackexchange.com/a/99949
 // https://github.com/machinekit/machinekit/blob/master/src/hal/drivers/hal_pru_generic/encoder.c
 //
@@ -93,7 +94,7 @@ const char soft_qei__lut[16] = {
 //      LUT = -1 : Count--
 //      LUT =  0 : No change
 //      LUT =  1 : Count++
-//      LUT =  3 : INVALID
+//      LUT =  3 : ERROR
 //
 //                   New New Old Old
 // Quadrature   B A | B   A   B   A
@@ -101,16 +102,16 @@ const char soft_qei__lut[16] = {
      0,      // 0 0 | 0   0   0   0
     -1,      // 0 - | 0   0   0   1
     +1,      // - 0 | 0   0   1   0
-     3,      // - - | 0   0   1   1
+   ERR,      // - - | 0   0   1   1
     +1,      // 0 + | 0   1   0   0
      0,      // 0 1 | 0   1   0   1
-     3,      // - + | 0   1   1   0
+   ERR,      // - + | 0   1   1   0
     -1,      // - 1 | 0   1   1   1
     -1,      // + 0 | 1   0   0   0
-     3,      // + - | 1   0   0   1
+   ERR,      // + - | 1   0   0   1
      0,      // 1 0 | 1   0   1   0
     +1,      // 1 - | 1   0   1   1
-     3,      // + + | 1   1   0   0
+   ERR,      // + + | 1   1   0   0
     +1,      // + 1 | 1   1   0   1
     -1,      // 1 + | 1   1   1   0
      0,      // 1 1 | 1   1   1   1
@@ -127,21 +128,27 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt()
     
     unsigned int portd = PORTD;
     unsigned int portf = PORTF;
-    portd = portd;
-    portf = portf;
     _CNIF = 0; // Clear interrupt.
     
     static unsigned char qei3_lut_index = -1;
+    static unsigned char qei4_lut_index = -1;
     
-    qei3_lut_index = ((qei3_lut_index & 0x03) << 2) | (SOFT_QEI_ENC1 & 0x03);
+    qei3_lut_index = ((qei3_lut_index & 0x03) << 2) | (SOFT_QEI_ENC3 & 0x03);
+    qei4_lut_index = ((qei4_lut_index & 0x03) << 2) | (SOFT_QEI_ENC1 & 0x03);
     
-    increment = soft_qei__lut[qei3_lut_index];
-    if (increment == 3 && qei3_lut_index != -1) {
-        // TODO: error
+    increment = soft_qei_lut[qei3_lut_index];
+    if (increment == ERR) { // Probably trigged on boot.
+        qei3_errors++;
     }
     else {
         qei3_position += increment;
     }
     
-    // TODO qei4
+    increment = soft_qei_lut[qei4_lut_index];
+    if (increment == ERR) { // Probably trigged on boot.
+        qei4_errors++;
+    }
+    else {
+        qei4_position += increment;
+    }
 }

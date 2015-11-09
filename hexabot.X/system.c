@@ -148,8 +148,8 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             // TODO H-bridge vsense
             
             // Change notification interrupts for software QEI.
-            ConfigIntCNPortD(CHANGE_INT_ON & CHANGE_INT_PRI_0 & 0xFFFFFFFF);
-            ConfigIntCNPortF(CHANGE_INT_ON & CHANGE_INT_PRI_0 & 0xFFFFFFFF); // Most likely redundant.
+            ConfigIntCNPortD(CHANGE_INT_ON & CHANGE_INT_PRI_4 & 0xFFFFFFFF);
+            ConfigIntCNPortF(CHANGE_INT_ON & CHANGE_INT_PRI_4 & 0xFFFFFFFF); // Most likely redundant.
 #if 1
             // ENC1
             EnableCND8;
@@ -158,13 +158,14 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             EnableCND3;
             EnableCND4;
 #else
-            // ENC2 MOTOR_R
+            // ENC2 MOTOR_R untested
             EnableCND10;
             EnableCND11;
-            // ENC4 MOTOR_L
+            // ENC4 MOTOR_L untested
             EnableCNF0;
             EnableCNF1;
 #endif
+
             
             // Setup for pull-up and pull-down.
             CNPUBbits.CNPUB13 = ENABLE_PULLUP; // START

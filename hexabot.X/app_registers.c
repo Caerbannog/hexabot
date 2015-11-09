@@ -47,9 +47,10 @@ float r_control_speed = 0;
 float l_control_speed = 0;
 float control_loop_interval = .01;
 
-unsigned long qei3_position = 0;
-unsigned long qei4_position = 0;
-
+volatile unsigned long qei3_position = 0;
+volatile unsigned long qei4_position = 0;
+volatile unsigned int qei3_errors = 0;
+volatile unsigned int qei4_errors = 0;
 
 const register_t registers[] = {
     // 0
@@ -108,18 +109,11 @@ const register_t registers[] = {
     // 43
     REG_VAR(qei3_position),
     REG_VAR(qei4_position),
+    REG_VAR(qei3_errors),
+    REG_VAR(qei4_errors),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);
-
-const remote_prodecure_t procedures[] = {
-    { /*registers are not handled by a dedicated function*/ },
-    // 1
-    PROC(echo_args, 0),
-    PROC(SPI_args, 0),
-    PROC(I2C_args, 0)
-    // 4
-};
 
 void register_command(uint8_t * buffer, uint8_t received)
 {
@@ -135,8 +129,13 @@ void register_command(uint8_t * buffer, uint8_t received)
             CommandInSend(buffer, reg_size);
             return;
         }
+        /*
         else if (received - 1 > reg_size) {
-            ERROR("reg=%d smaller than received=%d", reg, received);
+            ERROR("reg=%d size smaller than received=%d", reg, received);
+        }
+        */
+        else if (received - 1 != reg_size) {
+            ERROR("reg=%d size different from received=%d", reg, received);
         }
         else {
             memcpy(registers[reg].addr, buffer + 1, received - 1);

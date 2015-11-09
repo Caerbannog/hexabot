@@ -52,6 +52,17 @@ volatile unsigned long qei4_position = 0;
 volatile unsigned int qei3_errors = 0;
 volatile unsigned int qei4_errors = 0;
 
+float odometry_x = 0;
+float odometry_y = 0;
+float odometry_theta = 0;
+float odometry_d = 0;
+int odometry_resolution = 100;
+
+float odometry_r_perimeter = 15;
+float odometry_l_perimeter = 15;
+float odometry_rotation_imbalance = 0;
+float half_wheel_distance = 10;
+
 const register_t registers[] = {
     // 0
     REG_VAR(PORTA), // Input.
@@ -104,13 +115,23 @@ const register_t registers[] = {
     REG_VAR(l_target_speed),
     REG_VAR(r_control_speed),
     REG_VAR(l_control_speed),
-    // 42
     REG_VAR(control_loop_interval),
     // 43
     REG_VAR(qei3_position),
     REG_VAR(qei4_position),
     REG_VAR(qei3_errors),
     REG_VAR(qei4_errors),
+    // 47
+    REG_VAR(odometry_x),
+    REG_VAR(odometry_y),
+    REG_VAR(odometry_theta),
+    REG_VAR(odometry_d),
+    REG_VAR(odometry_resolution),
+    // 52
+    REG_VAR(odometry_r_perimeter),
+    REG_VAR(odometry_l_perimeter),
+    REG_VAR(odometry_rotation_imbalance),
+    REG_VAR(half_wheel_distance),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

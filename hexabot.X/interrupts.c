@@ -129,7 +129,7 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt()
     char increment;
     
     unsigned int portd = PORTD;
-    unsigned int portf = PORTF;
+    unsigned int __attribute__((unused)) portf = PORTF; // Unused if ENC4 is not linked to a software QEI.
     _CNIF = 0; // Clear interrupt.
     
     static unsigned char qei3_lut_index = -1;
@@ -153,4 +153,22 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt()
     else {
         qei4_position += increment;
     }
+}
+
+unsigned long Read32bitQEI3VelocityCounter()
+{
+    _CNIE = 0;
+    unsigned long position = qei3_position;
+    qei3_position = 0;
+    _CNIE = 1;
+    return position;
+}
+
+unsigned long Read32bitQEI4VelocityCounter()
+{
+    _CNIE = 0;
+    unsigned long position = qei4_position;
+    qei4_position = 0;
+    _CNIE = 1;
+    return position;
 }

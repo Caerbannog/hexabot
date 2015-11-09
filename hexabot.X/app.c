@@ -32,6 +32,7 @@
 #include <stddef.h>
 #include <uart.h>
 #include <qei32.h>
+#include <math.h>
 
 
 #include <stdlib.h>
@@ -116,8 +117,7 @@ void APP_Tasks()
     MetricsAppend(7, Read32bitQEI2PositionCounter());
 #endif
 
-#if 1 // PID test
-    
+#if 1 // PID control
     static unsigned long last_time_asserv = 0;
     unsigned long new_time_asserv = ReadTimer23();
     float elapsed_asserv = (float)(new_time_asserv - last_time_asserv) * TIMER23_TICK_S;
@@ -191,7 +191,8 @@ void APP_Tasks()
     }
 #endif
 
-#if 1 // Joystick test without feedback
+#if 1 // Motor control
+  #if 1 // Convert floats and directions.
     motor_r_dir = (r_control_speed < 0); // REVERSED_MOTOR
     int pwm_r = abs(r_control_speed * 255);
     if (pwm_r > 255)
@@ -203,9 +204,8 @@ void APP_Tasks()
     if (pwm_l > 255)
         pwm_l = 255;
     motor_l_pwm = 255 - pwm_l;
-#endif
+  #endif
 
-#if 1 // Motor test
     // FIXME: turn OFF motors when USB link is broken: heartbeat ?
     SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
     LATEbits.LATE1 = (motor_r_dir == 0);
@@ -213,6 +213,24 @@ void APP_Tasks()
     SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
     LATEbits.LATE4 = (motor_l_dir == 0);
     LATEbits.LATE6 = (motor_l_dir != 0);
+#endif
+
+#if 1 // Odometry test
+    static int k = 0;
+    if (++k % odometry_resolution == 0) {
+        int r_ticks = Read32bitQEI4VelocityCounter();
+        int l_ticks = Read32bitQEI3VelocityCounter();
+        
+        float delta_d = odometry_r_perimeter * r_ticks
+                      + odometry_l_perimeter * l_ticks;
+        
+        odometry_theta += odometry_r_perimeter * r_ticks * (1 + odometry_rotation_imbalance) / half_wheel_distance
+                        - odometry_l_perimeter * l_ticks * (1 - odometry_rotation_imbalance) / half_wheel_distance;
+        
+        odometry_x += delta_d * sin(odometry_theta);
+        odometry_y += delta_d * cos(odometry_theta);
+        odometry_d += delta_d;
+    }
 #endif
     
     if (BUTTON_IsPressed(BUTTON_S1)) {

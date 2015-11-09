@@ -52,6 +52,17 @@ volatile extern unsigned long qei4_position;
 volatile extern unsigned int qei3_errors;
 volatile extern unsigned int qei4_errors;
 
+extern float odometry_x;
+extern float odometry_y;
+extern float odometry_theta;
+extern float odometry_d;
+extern int odometry_resolution;
+extern float odometry_r_perimeter;
+extern float odometry_l_perimeter;
+extern float odometry_rotation_imbalance;
+extern float half_wheel_distance;
+
+
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
 #define PROC(var, proc)  { (uint8_t *)&(var), sizeof(var), proc }
 

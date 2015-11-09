@@ -2,6 +2,7 @@
 /* Files to Include                                                           */
 /******************************************************************************/
 
+#include "system.h"
 #include "app_registers.h"
 #include <stdint.h>        /* Includes uint16_t definition   */
 #include <stdbool.h>       /* Includes true/false definition */
@@ -82,6 +83,12 @@
 
 #define ERR   3
 
+#define ENC1_PINS   (portd >> 8)
+#define ENC2_PINS   (portd >> 10)
+#define ENC3_PINS   (portd >> 3)
+#define ENC4_PINS   (portf >> 0)
+
+
 const char soft_qei_lut[16] = {
 // http://electronics.stackexchange.com/a/99949
 // https://github.com/machinekit/machinekit/blob/master/src/hal/drivers/hal_pru_generic/encoder.c
@@ -117,11 +124,6 @@ const char soft_qei_lut[16] = {
      0,      // 1 1 | 1   1   1   1
 };
 
-#define SOFT_QEI_ENC1   (portd >> 8)
-#define SOFT_QEI_ENC2   (portd >> 10)
-#define SOFT_QEI_ENC3   (portd >> 3)
-#define SOFT_QEI_ENC4   (portf >> 0)
-
 void __attribute__((interrupt,auto_psv)) _CNInterrupt()
 {
     char increment;
@@ -133,8 +135,8 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt()
     static unsigned char qei3_lut_index = -1;
     static unsigned char qei4_lut_index = -1;
     
-    qei3_lut_index = ((qei3_lut_index & 0x03) << 2) | (SOFT_QEI_ENC3 & 0x03);
-    qei4_lut_index = ((qei4_lut_index & 0x03) << 2) | (SOFT_QEI_ENC1 & 0x03);
+    qei3_lut_index = ((qei3_lut_index & 0x03) << 2) | (QEI3_PINS & 0x03);
+    qei4_lut_index = ((qei4_lut_index & 0x03) << 2) | (QEI4_PINS & 0x03);
     
     increment = soft_qei_lut[qei3_lut_index];
     if (increment == ERR) { // Probably trigged on boot.

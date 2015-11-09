@@ -150,21 +150,8 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             // Change notification interrupts for software QEI.
             ConfigIntCNPortD(CHANGE_INT_ON & CHANGE_INT_PRI_4 & 0xFFFFFFFF);
             ConfigIntCNPortF(CHANGE_INT_ON & CHANGE_INT_PRI_4 & 0xFFFFFFFF); // Most likely redundant.
-#if 1
-            // ENC1
-            EnableCND8;
-            EnableCND9;
-            // ENC3
-            EnableCND3;
-            EnableCND4;
-#else
-            // ENC2 MOTOR_R untested
-            EnableCND10;
-            EnableCND11;
-            // ENC4 MOTOR_L untested
-            EnableCNF0;
-            EnableCNF1;
-#endif
+            ENABLE_CN_QEI3;
+            ENABLE_CN_QEI4;
 
             
             // Setup for pull-up and pull-down.

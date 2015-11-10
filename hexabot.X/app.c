@@ -124,7 +124,7 @@ void APP_Tasks()
     if (elapsed_asserv > control_loop_interval) { // Update asserv
         last_time_asserv = new_time_asserv;
         
-        unsigned int ticks_r = Read32bitQEI2VelocityCounter();
+        unsigned int ticks_r = Read32bitQEI1VelocityCounter();
         float r_speed = (*(int*)&ticks_r) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
         
         static float r_speed_err_P_previous = 0;
@@ -152,7 +152,7 @@ void APP_Tasks()
         MetricsAppend(4, r_control_speed);
         //*/
         
-        unsigned int ticks_l = Read32bitQEI1VelocityCounter();
+        unsigned int ticks_l = Read32bitQEI2VelocityCounter();
         float l_speed = (REVERSED_MOTOR * *(int*)&ticks_l) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
         
         static float l_speed_err_P_previous = 0;
@@ -218,18 +218,26 @@ void APP_Tasks()
 #if 1 // Odometry test
     static int k = 0;
     if (++k % odometry_resolution == 0) {
-        int r_ticks = Read32bitQEI4VelocityCounter();
-        int l_ticks = Read32bitQEI3VelocityCounter();
+        int r_ticks = Read32bitQEI3VelocityCounter() * REVERSED_MOTOR;
+        int l_ticks = Read32bitQEI4VelocityCounter();
         
-        float delta_d = odometry_r_perimeter * r_ticks
-                      + odometry_l_perimeter * l_ticks;
+        float delta_d = odometry_r_arc / 2 * r_ticks
+                      + odometry_l_arc / 2 * l_ticks;
         
-        odometry_theta += odometry_r_perimeter * r_ticks * (1 + odometry_rotation_imbalance) / half_wheel_distance
-                        - odometry_l_perimeter * l_ticks * (1 - odometry_rotation_imbalance) / half_wheel_distance;
+        odometry_theta += odometry_r_arc * r_ticks * (1 + odometry_rotation_imbalance) / half_wheel_distance
+                        - odometry_l_arc * l_ticks * (1 - odometry_rotation_imbalance) / half_wheel_distance;
         
-        odometry_x += delta_d * sin(odometry_theta);
-        odometry_y += delta_d * cos(odometry_theta);
+        odometry_x += delta_d * cos(odometry_theta);
+        odometry_y += delta_d * sin(odometry_theta);
         odometry_d += delta_d;
+        
+        static int m = 0;
+        if (++m % 25 == 0) {
+            MetricsAppend(11, odometry_x);
+            MetricsAppend(12, odometry_y);
+            MetricsAppend(13, odometry_theta);
+            MetricsAppend(14, odometry_d);
+        }
     }
 #endif
     

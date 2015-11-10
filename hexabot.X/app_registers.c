@@ -58,8 +58,8 @@ float odometry_theta = 0;
 float odometry_d = 0;
 int odometry_resolution = 100;
 
-float odometry_r_perimeter = 15;
-float odometry_l_perimeter = 15;
+float odometry_r_arc = 15.0 / 4096;
+float odometry_l_arc = 15.0 / 4096;
 float odometry_rotation_imbalance = 0;
 float half_wheel_distance = 10;
 
@@ -128,8 +128,8 @@ const register_t registers[] = {
     REG_VAR(odometry_d),
     REG_VAR(odometry_resolution),
     // 52
-    REG_VAR(odometry_r_perimeter),
-    REG_VAR(odometry_l_perimeter),
+    REG_VAR(odometry_r_arc),
+    REG_VAR(odometry_l_arc),
     REG_VAR(odometry_rotation_imbalance),
     REG_VAR(half_wheel_distance),
 };

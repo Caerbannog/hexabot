@@ -57,8 +57,8 @@ extern float odometry_y;
 extern float odometry_theta;
 extern float odometry_d;
 extern int odometry_resolution;
-extern float odometry_r_perimeter;
-extern float odometry_l_perimeter;
+extern float odometry_r_arc;
+extern float odometry_l_arc;
 extern float odometry_rotation_imbalance;
 extern float half_wheel_distance;
 

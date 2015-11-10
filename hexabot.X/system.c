@@ -223,21 +223,20 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     QEI_INDEX_INTERRUPT_DISABLE & QEI_HOME_INTERRUPT_DISABLE & QEI_VELO_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_INIT_INTERRUPT_DISABLE & QEI_POS_OVERFLOW_INTERRUPT_DISABLE
                     & QEI_POS_LESS_EQU_INTERRUPT_DISABLE & QEI_POS_GREAT_EQU_INTERRUPT_DISABLE); // Same config.
-            /* ENC_1
-            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI72);
-            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI73);
-            //*/
-            //* ENC_2 MOTOR_R
-            PPSInput(IN_FN_PPS_QEA2, IN_PIN_PPS_RPI74);
-            PPSInput(IN_FN_PPS_QEB2, IN_PIN_PPS_RPI75);
-            //*/
-            /* ENC_3
+            //*
+            // ENC_2 MOTOR_R
+            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI74);
+            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RPI75);
+            // ENC_4 MOTOR_L
+            PPSInput(IN_FN_PPS_QEA2, IN_PIN_PPS_RPI96);
+            PPSInput(IN_FN_PPS_QEB2, IN_PIN_PPS_RP97);
+            /*/
+            // ENC_3
             PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RP67);
             PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP68);
-            //*/
-            //* ENC_4 MOTOR_L
-            PPSInput(IN_FN_PPS_QEA1, IN_PIN_PPS_RPI96);
-            PPSInput(IN_FN_PPS_QEB1, IN_PIN_PPS_RP97);
+            // ENC_1
+            PPSInput(IN_FN_PPS_QEA2, IN_PIN_PPS_RPI72);
+            PPSInput(IN_FN_PPS_QEB2, IN_PIN_PPS_RPI73);
             //*/
             
             // ADC continuous conversion

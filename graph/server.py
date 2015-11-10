@@ -96,7 +96,8 @@ class FileEventHandler(pyinotify.ProcessEvent):
 
 
 if __name__ == '__main__':
-
+    bottle.debug(True)
+    
     threading.Thread(target=monitoring_loop, daemon=True).start() # Monitoring loop for inotify
     threading.Thread(target=bottle.run, daemon=True).start()
 

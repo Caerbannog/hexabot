@@ -142,7 +142,8 @@ class controller:
                     if len(raw_metrics) % fmt.size != 0:
                         raise Exception('Unaligned metrics size %d' % len(raw_metrics))
                     
-                    for (m_timer, m_value, m_id) in fmt.iter_unpack(raw_metrics):
+                    for i in range(0, len(raw_metrics), fmt.size):
+                        (m_timer, m_value, m_id) = fmt.unpack(raw_metrics[i:(i+fmt.size)])
                         if reference_realtime == -1: # This will be the reference point
                             reference_realtime = time.time()
                             reference_timer = m_timer

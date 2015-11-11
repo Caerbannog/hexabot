@@ -162,18 +162,27 @@ def basic_loop():
                     axis_states[axis] = fvalue
                     print "%s: %.3f" % (axis, fvalue)
 
-
+import time
+import threading
+left_speed = 0
+right_speed = 0
+command_pending = True
 def control_loop():
+    global dev, command_pending, right_speed, left_speed # TODO class
     import hexabot
     dev = hexabot.controller([hexabot.COMMAND_INTERFACE])
     
     fw_speed = 0
     rot_speed = 0
+
+    thread = threading.Thread(target=command_loop)
+    thread.setDaemon(True)
+    thread.start()
     
     while True:
         evbuf = jsdev.read(8)
         if evbuf:
-            time, value, type, number = struct.unpack('IhBB', evbuf)
+            t, value, type, number = struct.unpack('IhBB', evbuf)
 
             if type & 0x80:
                  print "(initial)",
@@ -205,16 +214,24 @@ def control_loop():
                     right = fw_speed - rot_speed
                     
                     speed_limiter = max(1.0, left, right, -left, -right)
-                    left  /= speed_limiter
-                    right /= speed_limiter
+                    left_speed  = left / speed_limiter
+                    right_speed = right / speed_limiter
                     
-                    print("left=%s right=%s" % (left, right))
-                    
-                    for (reg, value) in [(38, right), (39, left)]:
-                        print("cmd=%s" % [reg, value])
-                        dev.send_command([reg, value])
-                        answer = dev.receive_command()
-                        #~ print(' '.join([format(i, '02x') for i in answer]))
+                    command_pending = True
+
+def command_loop(): # Throttle when the joystick sends too many events. FIXME: improve with events.
+    global command_pending, dev
+    while True:
+        while not command_pending:
+            time.sleep(.05)
+        print("left=%s right=%s" % (left_speed, right_speed))
+
+        command_pending = False
+        for (reg, value) in [(38, right_speed), (39, left_speed)]:
+            print("cmd=%s" % [reg, value])
+            dev.send_command([reg, value])
+            answer = dev.receive_command()
+            #~ print(' '.join([format(i, '02x') for i in answer]))
 
 
 if __name__ == '__main__':

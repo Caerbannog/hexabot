@@ -10,41 +10,45 @@
 <script src="rickshaw.min.js"></script>
 <link rel="stylesheet" type="text/css" href="rickshaw.min.css">
 <style>
-#container {
+#chart-container {
     margin: 0 20px;
-}
-#slider {
-    margin: 20px 0;
 }
 #chart {
     width: 100%;
 }
+#slider {
+    margin: 20px 0;
+}
 </style>
 </head>
 <body>
-<div style="display: none">
-    <h1>Metrics Graph</h1>
-    <div id="container">
-        <div id="chart"></div>
-        <div id="slider"></div>
-    </div>
+<div>
+    <canvas id="canvas" width="825" height="625" style="border:1px solid red; position: absolute;">
+    </canvas>
+    <svg id="svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns="http://www.w3.org/2000/svg"
+        width="825" height="625" id="svg" style="border: 1px solid black" viewBox="-1650 -1250 3300 2500">
+        <g transform="rotate(-90) scale(1, -1)">
+            <image style="opacity: .7" x="-1250" y="-1650" width="2500" height="3300" xlink:href="playground.svg"/>
+        </g>
+        <!--image id="axes" xlink:href="axes.svg"  style="border: 1px solid green" -->
+        <g id="robot">
+            <rect x="-150" y="-100" width="300" height="200" style="fill:#000000" />
+            <path style="fill:#ffffff" d="m 0,-50 -30,30 20,0 0,60 20,0 0,-60 20,0 30,30" inkscape:connector-curvature="0" />
+        </g>
+    </svg>
 </div>
-<svg version="1.1"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    xmlns="http://www.w3.org/2000/svg"
-    width="900" height="600" id="svg">
-    <g transform="scale(0.25) translate(-100,3300) scale(1,-1) rotate(90, 1300, 2100)">
-        <image style="opacity:.5" x="0" y="0" width="2500" height="3300" xlink:href="playground.svg"/>
-    </g>
-    <image id="robot" x="0" y="0" width="100" height="100" xlink:href="robot.svg"/>
-</svg>
-<hr>
+<h1>Metrics Graph</h1>
+<div id="chart-container">
+    <div id="chart"></div>
+    <div id="slider"></div>
+</div>
 <button onclick="test()">Test</button>
 <form>
     <input id="message" type="text">
 </form>
 <script>
-var robot_svg = $('#robot')[0];
+var ctx = $('#canvas')[0].getContext("2d");
+var robot = $('#robot')[0];
 
 var time = new Date().getTime() / 1000;
 var graph = new Rickshaw.Graph({
@@ -61,18 +65,15 @@ var graph = new Rickshaw.Graph({
         { data: [ { x: time, y: 0 } ], color: 'rgba(100,200,200,.8)'},
     ]
 });
-
 graph.render();
 
 var hoverDetail = new Rickshaw.Graph.HoverDetail( {
     graph: graph
 });
-
 var slider = new Rickshaw.Graph.RangeSlider({
     graph: graph,
     element: document.querySelector('#slider')
 });
-
 var xAxis = new Rickshaw.Graph.Axis.Time({
     graph: graph
 });
@@ -113,8 +114,11 @@ socket.onmessage = function(e) {
         }
         else if (series_id == 13) {
             last_theta = fields[2] * 180 / Math.PI;
-            robot_svg.setAttributeNS(null, "transform", "translate(" + (300+last_x) + ", " + (300+last_y) + ") rotate(" + last_theta + ") translate(-50,-50)");
-            console.log(last_x, last_y)
+            robot.setAttributeNS(null, "transform", ""
+                 + "translate(" + (last_x) + ", " + (-last_y) + ") "
+                 + "rotate(" + (90-last_theta) + ") "
+                 );
+            console.log(last_x, last_y, last_theta)
         }
         else {
             var point = { x: +fields[1], y: +fields[2] };

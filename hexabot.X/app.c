@@ -206,7 +206,8 @@ void APP_Tasks()
     motor_l_pwm = 255 - pwm_l;
   #endif
 
-    // FIXME: turn OFF motors when USB link is broken: heartbeat ?
+    // TODO: turn OFF motors when USB link is broken: heartbeat ?
+    // TODO: command to reset the MCU
     SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
     LATEbits.LATE1 = (motor_r_dir == 0);
     LATEbits.LATE2 = (motor_r_dir != 0);
@@ -218,8 +219,8 @@ void APP_Tasks()
 #if 1 // Odometry test
     static int k = 0;
     if (++k % odometry_resolution == 0) {
-        int r_ticks = Read32bitQEI3VelocityCounter() * REVERSED_MOTOR;
-        int l_ticks = Read32bitQEI4VelocityCounter();
+        int r_ticks = Read32bitQEI4VelocityCounter() * REVERSED_MOTOR;
+        int l_ticks = Read32bitQEI3VelocityCounter();
         
         float delta_d = odometry_r_arc / 2 * r_ticks
                       + odometry_l_arc / 2 * l_ticks;

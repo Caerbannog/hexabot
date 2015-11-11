@@ -47,10 +47,10 @@ extern float r_control_speed;
 extern float l_control_speed;
 extern float control_loop_interval;
 
-volatile extern unsigned long qei3_position;
-volatile extern unsigned long qei4_position;
-volatile extern unsigned int qei3_errors;
-volatile extern unsigned int qei4_errors;
+extern unsigned long qei3_position;
+extern unsigned long qei4_position;
+extern volatile unsigned int qei3_errors;
+extern volatile unsigned int qei4_errors;
 
 extern float odometry_x;
 extern float odometry_y;

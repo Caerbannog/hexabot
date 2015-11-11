@@ -124,10 +124,11 @@ const char soft_qei_lut[16] = {
      0,      // 1 1 | 1   1   1   1
 };
 
+volatile int qei3_velocity = 0;
+volatile int qei4_velocity = 0;
+
 void __attribute__((interrupt,auto_psv)) _CNInterrupt()
 {
-    char increment;
-    
     unsigned int portd = PORTD;
     unsigned int __attribute__((unused)) portf = PORTF; // Unused if ENC4 is not linked to a software QEI.
     _CNIF = 0; // Clear interrupt.
@@ -138,37 +139,43 @@ void __attribute__((interrupt,auto_psv)) _CNInterrupt()
     qei3_lut_index = ((qei3_lut_index & 0x03) << 2) | (QEI3_PINS & 0x03);
     qei4_lut_index = ((qei4_lut_index & 0x03) << 2) | (QEI4_PINS & 0x03);
     
-    increment = soft_qei_lut[qei3_lut_index];
-    if (increment == ERR) { // Probably trigged on boot.
-        qei3_errors++;
+    {
+        char increment = soft_qei_lut[qei3_lut_index];
+        if (increment == ERR) { // Probably trigged on boot.
+            qei3_errors++;
+        }
+        else {
+            qei3_velocity += increment;
+        }
     }
-    else {
-        qei3_position += increment;
-    }
-    
-    increment = soft_qei_lut[qei4_lut_index];
-    if (increment == ERR) { // Probably trigged on boot.
-        qei4_errors++;
-    }
-    else {
-        qei4_position += increment;
+
+    {
+        char increment = soft_qei_lut[qei4_lut_index];
+        if (increment == ERR) { // Probably trigged on boot.
+            qei4_errors++;
+        }
+        else {
+            qei4_velocity += increment;
+        }
     }
 }
 
 unsigned long Read32bitQEI3VelocityCounter()
 {
     _CNIE = 0;
-    unsigned long position = qei3_position;
-    qei3_position = 0;
+    unsigned long vel = qei3_velocity;
+    qei3_velocity = 0;
     _CNIE = 1;
-    return position;
+    qei3_position += vel;
+    return vel;
 }
 
 unsigned long Read32bitQEI4VelocityCounter()
 {
     _CNIE = 0;
-    unsigned long position = qei4_position;
-    qei4_position = 0;
+    unsigned long vel = qei4_velocity;
+    qei4_velocity = 0;
     _CNIE = 1;
-    return position;
+    qei4_position += vel;
+    return vel;
 }

@@ -47,8 +47,8 @@ float r_control_speed = 0;
 float l_control_speed = 0;
 float control_loop_interval = .01;
 
-volatile unsigned long qei3_position = 0;
-volatile unsigned long qei4_position = 0;
+unsigned long qei3_position = 0;
+unsigned long qei4_position = 0;
 volatile unsigned int qei3_errors = 0;
 volatile unsigned int qei4_errors = 0;
 
@@ -58,10 +58,10 @@ float odometry_theta = 0;
 float odometry_d = 0;
 int odometry_resolution = 100;
 
-float odometry_r_arc = 15.0 / 4096;
-float odometry_l_arc = 15.0 / 4096;
+float odometry_r_arc = 15.07 / 8192;
+float odometry_l_arc = 15.07 / 8192;
 float odometry_rotation_imbalance = 0;
-float half_wheel_distance = 10;
+float half_wheel_distance = 14.2;
 
 const register_t registers[] = {
     // 0

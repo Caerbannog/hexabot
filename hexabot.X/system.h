@@ -75,7 +75,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state );
 #define Fcy                60000000
 #define MOTOR_PWM_PERIOD   ((uint16_t)(0.0005 * Fcy / 256))
 
-#if 0 // Software QEI for external encoders.
+#if 1 // Software QEI for external encoders.
   #define QEI3_PINS          ENC3_PINS
   #define QEI4_PINS          ENC1_PINS
   #define ENABLE_CN_QEI3     EnableCND3; EnableCND4; // ENC3

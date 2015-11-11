@@ -1,15 +1,40 @@
 Hexabot Sources
 ===============
 
-Overview
---------
 Design files and source code of a mobile robot for the [Eurobot competition](http://www.eurobot.org/).
 
 The controller board is built in [KiCad](http://www.kicad-pcb.org/)
 around a [dsPIC33EP256MU806](https://www.microchip.com/products/dsPIC33EP256MU806) (QFN, motor control, USB).
-You can control it from an embedded Linux like the Raspberry Pi.
+You can control it from your development machine or an embedded Linux like the Raspberry Pi.
 
-Python scripts use [PyUSB](https://walac.github.io/pyusb/) to communicate with the various interfaces (commands, odometry, metrics, debug logs).
+Controller PCB
+--------------
+The board handles various functions: motor control, odometry, sensors and servomotors.
+It has two layers, 10cm*10cm and mostly 0806 SMT components.
+
+You can buy 10 PCBs for 32$ at [SeeedStudio](http://www.seeedstudio.com/service/index.php?r=pcb).
+Then we hand-soldered ours.
+
+![Layout v1](kicad/v1-layout.png)
+
+Embedded Software
+-----------------
+The source code for the microcontroller is in [hexabot.X](hexabot.X/).
+It is controlled with the tools in [linux](linux/). Most are Python scripts that
+use [PyUSB](https://walac.github.io/pyusb/) to communicate with the board through independant USB endpoints:
+- Bulk commands to set parameters and read back values. The basic idea is to run `command.py <register> <value>` to set a value.
+- Bulk metrics broadcasting. Dump them with `metrics.py`.
+- Isochronous packets for time-sensitive data. Dump them with `isochronous.py`.
+- Serial port for debugging. Show the debug console with `miniterm.py /dev/ttyACM* 9600 -D`.
+
+A higher level scripts like `joystick.py` uses the command endpoint to let you control the motors with a USB joystick.
+
+User Interface
+--------------
+The [ui](ui/) directory contains a Python webserver with these features:
+- live updates of the position according to odometry,
+- graphs to visualize metrics,
+- maybe someday a way to send commands.
 
 Setup
 -----
@@ -28,40 +53,6 @@ sudo cp hexabot.rules /etc/udev/rules.d/
 sudo pip install miniterm.py
 ```
 
-Show the debug console:
-`miniterm.py /dev/ttyACM* 9600 -D`
-
-Documentation
--------------
-### Hexabot Controller ###
-The board handles various functions: motor control, odometry, sensors and servomotors.
-It has two layers, 10cm*10cm and mostly 0806 SMT components.
-
-You can buy 10 PCBs for 32$ at [SeeedStudio](http://www.seeedstudio.com/service/index.php?r=pcb).
-Then we hand-soldered ours.
-
-TODO:
-
-- board functions
-
-![Layout v1](kicad/v1-layout.png)
-
-### dsPIC Software ###
-Refer to the source code in [hexabot.X](hexabot.X/).
-
-TODO:
-
-- code architecture
-- role of endpoints
-- wire protocols
-
-### Linux Software ###
-Refer to the source code in [linux](linux/).
-
-TODO
-
-- high level AI
-
 Contributing
 ------------
 Pull requests are welcome on the project page:
@@ -72,3 +63,9 @@ Licenses
 - Hardware design files are published under the CERN OHL v.1.2.
 - Source code is published under the GPLv3 or later.
 - Note that Microchip's USB library and the CDC-basic demo have a more restrictive license.
+
+TODO list
+---------
+- Documentation for the code. Links to documentation for the motor control and odometry.
+- On raspbian wheezy we need pip becomes pip-3.2, python3.4 isn't supported, so autobahn can't be installed
+- The udev rules seem to give unsufficient permissions

@@ -19,22 +19,18 @@
 #include <string.h>
 #include <xc.h>
 
+
 #ifndef PORTA // 806 dsPIC
 uint16_t PORTA = 0;
 uint16_t LATA  = 0;
 uint16_t TRISA = 0;
 #endif
 
-uint16_t vbat = 0;
+uint8_t servo1 = 127; // FIXME: register ?
+
 float KP = 1.4; // 1/(m/s)
 float KI = 1.0;
 float KD = 0;
-
-uint8_t echo_args[16] = {};
-uint8_t SPI_args[16] = {};
-uint8_t I2C_args[16] = {};
-
-uint8_t servo1 = 127;
 
 uint8_t motor_r_pwm = 127;
 uint8_t motor_r_dir = 1;
@@ -57,7 +53,6 @@ float odometry_y = 0;
 float odometry_theta = 0;
 float odometry_d = 0;
 int odometry_resolution = 100;
-
 float odometry_r_arc = 15.07 / 8192;
 float odometry_l_arc = 15.07 / 8192;
 float odometry_rotation_imbalance = 0;
@@ -136,12 +131,13 @@ const register_t registers[] = {
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);
 
+
 void register_command(uint8_t * buffer, uint8_t received)
 {
-    // FIXME: assert sizeof register
     uint8_t reg = buffer[0];
     if (reg >= register_count) {
         ERROR("reg=%d", reg);
+        buffer[0] = COMMAND_ERROR;
     }
     else {
         uint8_t reg_size = registers[reg].size;
@@ -150,18 +146,14 @@ void register_command(uint8_t * buffer, uint8_t received)
             CommandInSend(buffer, reg_size);
             return;
         }
-        /*
-        else if (received - 1 > reg_size) {
-            ERROR("reg=%d size smaller than received=%d", reg, received);
-        }
-        */
         else if (received - 1 != reg_size) {
-            ERROR("reg=%d size different from received=%d", reg, received);
+            ERROR("reg=%d size is %d not %d", reg, reg_size, received - 1);
+            buffer[0] = COMMAND_ERROR;
         }
         else {
             memcpy(registers[reg].addr, buffer + 1, received - 1);
+            buffer[0] = COMMAND_SUCCESS;
         }
     }
-    buffer[0] = 0xFF;
-    CommandInSend(buffer, 1); // TODO ACK
+    CommandInSend(buffer, 1);
 }

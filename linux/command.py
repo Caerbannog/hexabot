@@ -25,7 +25,7 @@ if __name__ == "__main__":
     if len(answer) == 1:
         formats.append('c') # char
     elif len(answer) == 2:
-        formats.append('s') # short
+        formats.append('h') # short
     elif len(answer) == 4:
         formats.append('i') # int
         formats.append('f') # float

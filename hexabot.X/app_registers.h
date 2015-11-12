@@ -18,29 +18,25 @@
 
 #include <stdint.h>
 
+#define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
+
+
 typedef struct {
     uint8_t * const addr;
     const uint8_t size;
 } register_t;
 
-typedef struct {
-    const uint8_t * args;
-    const uint8_t size;
-    const void (* procedure)(void); // Function pointer.
-} remote_prodecure_t;
-
-extern const register_t registers[];
-extern const uint8_t register_count;
-extern const remote_prodecure_t procedures[];
-
 extern uint8_t servo1;
+
 extern float KP;
 extern float KI;
 extern float KD;
+
 extern uint8_t motor_r_pwm;
 extern uint8_t motor_r_dir;
 extern uint8_t motor_l_pwm;
 extern uint8_t motor_l_dir;
+
 extern float r_target_speed;
 extern float l_target_speed;
 extern float r_control_speed;
@@ -61,10 +57,6 @@ extern float odometry_r_arc;
 extern float odometry_l_arc;
 extern float odometry_rotation_imbalance;
 extern float half_wheel_distance;
-
-
-#define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
-#define PROC(var, proc)  { (uint8_t *)&(var), sizeof(var), proc }
 
 
 void register_command(uint8_t * buffer, uint8_t received);

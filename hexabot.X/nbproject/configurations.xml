@@ -28,6 +28,7 @@
       <itemPath>system_config.h</itemPath>
       <itemPath>app.h</itemPath>
       <itemPath>app_registers.h</itemPath>
+      <itemPath>app_procedures.h</itemPath>
     </logicalFolder>
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
@@ -50,6 +51,7 @@
       <itemPath>app.c</itemPath>
       <itemPath>app_registers.c</itemPath>
       <itemPath>interrupts.c</itemPath>
+      <itemPath>app_procedures.c</itemPath>
     </logicalFolder>
     <itemPath>Makefile</itemPath>
   </logicalFolder>

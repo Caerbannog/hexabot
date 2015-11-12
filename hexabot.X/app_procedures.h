@@ -13,25 +13,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef USB_COMMANDS_H
-#define	USB_COMMANDS_H
+#ifndef APP_PROCEDURES_H
+#define	APP_PROCEDURES_H
 
-#include "usb_config.h"
-#include <usb/usb_common.h>
 #include <stdint.h>
 
-#define PROCEDURE_COMMAND  0xFF
+#define PROC(var, proc)    { (uint8_t *)&(var), sizeof(var), proc }
 
 
-typedef enum {
-    COMMAND_SUCCESS = 0,
-    COMMAND_ERROR   = 0xFF
-} command_result_t;
+typedef struct {
+    uint8_t * const args;
+    const uint8_t arg_size;
+    void (* const procedure)(int); // Function pointer.
+} procedure_t;
 
-void CommandInitEP(void);
-uint8_t CommandOutPoll(uint8_t * buffer, uint8_t len);
-bool CommandEventHandler(USB_EVENT event, void *pdata, uint16_t size);
-void CommandInSend(uint8_t * buffer, uint8_t len);
-void CommandService(void);
 
-#endif	/* USB_COMMANDS_H */
+void procedure_command(uint8_t * buffer, uint8_t received);
+
+#endif	/* APP_PROCEDURES_H */
+

@@ -17,6 +17,7 @@
 #include "app.h"
 #include "app_led_usb_status.h"
 #include "app_registers.h"
+#include "app_procedures.h"
 #include <usb/usb_commands.h>
 #include <usb/usb_metrics.h>
 #include <usb/usb_isochronous.h>
@@ -265,7 +266,12 @@ void APP_Tasks()
     if (received > 0) {
         //LOG("received=%d", received);
         //putUSBUSART(buffer, received);
-        register_command(buffer, received);
+        if (buffer[0] == PROCEDURE_COMMAND) {
+            procedure_command(buffer + 1, received - 1);
+        }
+        else {
+            register_command(buffer, received);
+        }
     }
 
     /* Check to see if there is a transmission in progress, if there isn't, then

@@ -30,10 +30,9 @@
         <g transform="rotate(-90) scale(1, -1)">
             <image style="opacity: .7" x="-1250" y="-1650" width="2500" height="3300" xlink:href="playground.svg"/>
         </g>
-        <!--image id="axes" xlink:href="axes.svg"  style="border: 1px solid green" -->
         <g id="robot">
-            <rect x="-150" y="-100" width="300" height="200" style="fill:#000000" />
-            <path style="fill:#ffffff" d="m 0,-50 -30,30 20,0 0,60 20,0 0,-60 20,0 30,30" inkscape:connector-curvature="0" />
+            <rect x="-150" y="-100" width="300" height="200" style="fill:#632A61"/>
+            <path style="fill:#ffffff" d="m 0,-50 -30,30 20,0 0,60 20,0 0,-60 20,0 30,30"/>
         </g>
     </svg>
 </div>
@@ -47,8 +46,13 @@
     <input id="message" type="text">
 </form>
 <script>
-var ctx = $('#canvas')[0].getContext("2d");
 var robot = $('#robot')[0];
+var canvas = $('#canvas')[0];
+var ctx = canvas.getContext("2d");
+ctx.globalAlpha = .5
+ctx.scale(canvas.width / 3300, canvas.height / 2500);
+ctx.translate(1650, 1250);
+ctx.lineWidth = 8
 
 var time = new Date().getTime() / 1000;
 var graph = new Rickshaw.Graph({
@@ -110,15 +114,20 @@ socket.onmessage = function(e) {
             last_x = +fields[2];
         }
         if (series_id == 12) {
-            last_y = +fields[2];
+            last_y = -fields[2];
         }
         else if (series_id == 13) {
             last_theta = fields[2] * 180 / Math.PI;
             robot.setAttributeNS(null, "transform", ""
-                 + "translate(" + (last_x) + ", " + (-last_y) + ") "
+                 + "translate(" + (last_x) + ", " + (last_y) + ") "
                  + "rotate(" + (90-last_theta) + ") "
                  );
             console.log(last_x, last_y, last_theta)
+            ctx.lineTo(last_x, last_y);
+            ctx.strokeStyle = '#ec8fe9';
+            ctx.stroke()
+            ctx.beginPath();
+            ctx.moveTo(last_x, last_y);
         }
         else {
             var point = { x: +fields[1], y: +fields[2] };

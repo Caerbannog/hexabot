@@ -39,6 +39,9 @@ The [ui](ui/) directory contains a Python webserver with these features:
 Setup
 -----
 Download and install the [MPLABX IDE](http://www.microchip.com/mplabx/) and the [XC16 compiler](http://www.microchip.com/compilers/).
+You need xc16 v1.25+ because of bug XC16-781 (snprintf).
+Sadly the peripheral libraries were last shipped with v1.24 and the new Code Configurator doesn't support dsPIC33E yet.
+You need to copy the libraries from one installed version to the other.
 
 Install Python 3 and debugging tools like Wireshark.
 For Ubuntu 15.04 you can run:

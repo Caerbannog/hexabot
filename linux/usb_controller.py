@@ -3,12 +3,14 @@
 
 """USB interface for Hexabot Controller ver. 0x01"""
 
+import sys
 import usb.core
 import usb.util
 import usb.control
 import time
 import struct
 import array
+import threading
 
 
 CDC_CONTROL_INTERFACE = 0
@@ -31,7 +33,7 @@ COMMAND_TIMEOUT = 1000
 INTERACTION_TIMEOUT = 200 # used to respond to KeyboardInterrupt
 
 
-class controller:
+class USBController:
     def __init__(self, interface_numbers):
         self.dev = usb.core.find(idVendor=0x04D8, idProduct=0x000A)
         if self.dev is None:
@@ -48,8 +50,15 @@ class controller:
     
     
     def send_command(self, cmd):
-        """Command format: length of payload (1 byte), payload (n bytes), null (1 byte)
-           Command payload: """
+        """
+        Command format: length of payload (1 byte), payload (n bytes), null (1 byte)
+        
+        Read a register:     <reg>
+        Write to a register: <reg> <byte1> ...
+        Run a procedure:     255 <proc> <arg1> ...
+        
+        The list of registers and procedures are in app_registers.c and app_procedures.c
+        """
         
         # Replace floats by their byte representation.
         cmd_bytes = array.array('B')
@@ -90,8 +99,10 @@ class controller:
     
     
     def try_receive(self):
+        """Untested"""
+        
         try:
-            return receive()
+            return self.receive_command()
         except usb.core.USBError as e:
             if e.args == (110, 'Operation timed out'):
                 return ''
@@ -100,6 +111,8 @@ class controller:
     
     
     def dump_isochronous(self):
+        """Dump isochronous frames"""
+        
         while True:
             try:
                 frame = self.dev.read(ISOCHRONOUS_IN_EP, ISOCHRONOUS_IN_SIZE,
@@ -117,6 +130,8 @@ class controller:
             
     
     def dump_metrics(self):
+        """Read real time metrics over a bulk endpoint"""
+        
         TIMER_FREQ = 256. / 60e6
         
         fmt = struct.Struct('<LfB') # little-endian, uint32_t, float, uint8_t
@@ -161,3 +176,17 @@ class controller:
                         continue
                     else:
                         raise
+
+if __name__ == "__main__":
+    dev = USBController([METRICS_INTERFACE, ISOCHRONOUS_INTERFACE])
+    
+    t1 = threading.Thread(target=dev.dump_metrics)
+    t1.setDaemon(True)
+    t1.start()
+    
+    t2 = threading.Thread(target=dev.dump_isochronous)
+    t2.setDaemon(True)
+    t2.start()
+    
+    t1.join()
+    t2.join()

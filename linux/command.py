@@ -3,17 +3,17 @@
 
 """Send command and read response"""
 
-import hexabot
+import usb_controller
 import sys
 import struct
 
 
 if __name__ == "__main__":
     if len(sys.argv) == 1:
-        print("Usage: %s <byte ...>" % sys.argv[0])
+        print("Usage: %s <byte1> ..." % sys.argv[0])
         exit(1)
     
-    dev = hexabot.controller([hexabot.COMMAND_INTERFACE])
+    dev = usb_controller.USBController([usb_controller.COMMAND_INTERFACE])
     
     args = [ eval(i) for i in sys.argv[1:]] # Convert logical expressions and hexadecimal
     

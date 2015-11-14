@@ -19,12 +19,11 @@ Then we hand-soldered ours.
 
 Embedded Software
 -----------------
-The source code for the microcontroller is in [hexabot.X](hexabot.X/).
+The source code for the microcontroller is in [hexabot-dsPIC33.X](hexabot-dsPIC33.X/).
 It is controlled with the tools in [linux](linux/). Most are Python scripts that
 use [PyUSB](https://walac.github.io/pyusb/) to communicate with the board through independant USB endpoints:
-- Bulk commands to set parameters and read back values. The basic idea is to run `command.py <register> <value>` to set a value.
-- Bulk metrics broadcasting. Dump them with `metrics.py`.
-- Isochronous packets for time-sensitive data. Dump them with `isochronous.py`.
+- Bulk commands to set parameters and read back values. The basic idea is to run `./command.py <register> <value>` to set a value.
+- Bulk metrics broadcasting, isochronous packets for time-sensitive data. Dump them with `./usb_controller.py`.
 - Serial port for debugging. Show the debug console with `miniterm.py /dev/ttyACM* 9600 -D`.
 
 A higher level scripts like `joystick.py` uses the command endpoint to let you control the motors with a USB joystick.

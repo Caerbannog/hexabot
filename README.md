@@ -5,7 +5,7 @@ Design files and source code of a mobile robot for the [Eurobot competition](htt
 
 The controller board is built in [KiCad](http://www.kicad-pcb.org/)
 around a [dsPIC33EP256MU806](https://www.microchip.com/products/dsPIC33EP256MU806) (QFN, motor control, USB).
-You can control it from your development machine or an embedded Linux like the Raspberry Pi.
+You can control it from your development machine or an embedded Linux like the Raspberry Pi (raspbian jessie recommended).
 
 Controller PCB
 --------------
@@ -69,5 +69,3 @@ Licenses
 TODO list
 ---------
 - Documentation for the code. Links to documentation for the motor control and odometry.
-- On raspbian wheezy we need pip becomes pip-3.2, python3.4 isn't supported, so autobahn can't be installed
-- The udev rules seem to give unsufficient permissions

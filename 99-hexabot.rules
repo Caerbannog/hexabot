@@ -5,3 +5,6 @@ SUBSYSTEM=="usbmon", GROUP="wireshark", MODE="640"
 
 # Tell ModemManager to ignore /dev/ttyACM* matching the Microchip Vendor ID
 ATTRS{idVendor}=="04d8", ENV{ID_MM_DEVICE_IGNORE}="1"
+
+# Change permissions
+SUBSYSTEMS=="usb", ATTRS{idVendor}=="04d8", MODE:="0666"

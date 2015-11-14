@@ -2,6 +2,7 @@
 #-*- coding: utf8 -*-
  
 from autobahn.asyncio.websocket import WebSocketServerProtocol, WebSocketServerFactory
+import re
 import bottle
 import threading
 import pyinotify
@@ -9,6 +10,7 @@ import asyncio
 
 
 WATCHFILE = "../metrics.txt"
+MAIN_PORT=8080
 WS_PORT=8081
 
 @bottle.route('/<filename:path>')
@@ -17,7 +19,12 @@ def server_static(filename):
 
 @bottle.route('/')
 def server_static():
-    return bottle.template("index.html", ws_port=WS_PORT)
+    host = re.sub(r":.*", "", bottle.request.get_header('host')) # Remove port
+    return bottle.template("index.html", host=host, ws_port=WS_PORT)
+
+def run_bottle():
+    bottle.debug(True)
+    bottle.run(host='0.0.0.0', port=MAIN_PORT) # Listen on all interfaces.
 
 
 class MetricsProtocol(WebSocketServerProtocol):
@@ -96,10 +103,8 @@ class FileEventHandler(pyinotify.ProcessEvent):
 
 
 if __name__ == '__main__':
-    bottle.debug(True)
-    
     threading.Thread(target=monitoring_loop, daemon=True).start() # Monitoring loop for inotify
-    threading.Thread(target=bottle.run, daemon=True).start()
+    threading.Thread(target=run_bottle, daemon=True).start()
 
     factory = BroadcastServerFactory("ws://localhost:%d" % WS_PORT)
     factory.protocol = MetricsProtocol

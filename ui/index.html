@@ -120,7 +120,7 @@ var yAxis = new Rickshaw.Graph.Axis.Y({
 yAxis.render();
 
 
-var socket = new WebSocket('ws://127.0.0.1:{{ws_port}}/');
+var socket = new WebSocket('ws://{{host}}:{{ws_port}}/');
 
 socket.onerror = function(e) {
     console.error('onerror', e);

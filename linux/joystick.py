@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # https://gist.github.com/rdb/8864666
 
 # Released by rdb under the Unlicense (unlicense.org)
@@ -100,11 +100,9 @@ print('Opening %s...' % fn)
 jsdev = open(fn, 'rb')
 
 # Get the device name.
-#buf = bytearray(63)
-buf = array.array('c', ['\0'] * 64)
+buf = bytearray(63)
 ioctl(jsdev, 0x80006a13 + (0x10000 * len(buf)), buf) # JSIOCGNAME(len)
-js_name = buf.tostring()
-print('Device name: %s' % js_name)
+print(buf.decode('utf8'))
 
 # Get number of axes and buttons.
 buf = array.array('B', [0])
@@ -133,8 +131,8 @@ for btn in buf[:num_buttons]:
     button_map.append(btn_name)
     button_states[btn_name] = 0
 
-print '%d axes found: %s' % (num_axes, ', '.join(axis_map))
-print '%d buttons found: %s' % (num_buttons, ', '.join(button_map))
+print('%d axes found: %s' % (num_axes, ', '.join(axis_map)))
+print('%d buttons found: %s' % (num_buttons, ', '.join(button_map)))
 
 def basic_loop():
     # Main event loop
@@ -144,23 +142,23 @@ def basic_loop():
             time, value, type, number = struct.unpack('IhBB', evbuf)
 
             if type & 0x80:
-                 print "(initial)",
+                 print("(initial)", end="")
 
             if type & 0x01:
                 button = button_map[number]
                 if button:
                     button_states[button] = value
                     if value:
-                        print "%s pressed" % (button)
+                        print("%s pressed" % (button))
                     else:
-                        print "%s released" % (button)
+                        print("%s released" % (button))
 
             if type & 0x02:
                 axis = axis_map[number]
                 if axis:
                     fvalue = value / 32767.0
                     axis_states[axis] = fvalue
-                    print "%s: %.3f" % (axis, fvalue)
+                    print("%s: %.3f" % (axis, fvalue))
 
 import time
 import threading
@@ -169,39 +167,33 @@ right_speed = 0.0
 command_pending = True
 def control_loop():
     global dev, command_pending, right_speed, left_speed # TODO class
-    import hexabot
-    dev = hexabot.controller([hexabot.COMMAND_INTERFACE])
     
     fw_speed = 0
     rot_speed = 0
 
-    thread = threading.Thread(target=command_loop)
-    thread.setDaemon(True)
-    thread.start()
-    
     while True:
         evbuf = jsdev.read(8)
         if evbuf:
             t, value, type, number = struct.unpack('IhBB', evbuf)
 
             if type & 0x80:
-                 print "(initial)",
+                 print("(initial)", end="")
 
             if type & 0x01:
                 button = button_map[number]
                 if button:
                     button_states[button] = value
                     if value:
-                        print "%s pressed" % (button)
+                        print("%s pressed" % (button))
                     else:
-                        print "%s released" % (button)
+                        print("%s released" % (button))
 
             if type & 0x02:
                 axis = axis_map[number]
                 if axis:
                     fvalue = value / 32767.0
                     axis_states[axis] = fvalue
-                    print "%s: %.3f" % (axis, fvalue)
+                    print("%s: %.3f" % (axis, fvalue))
                     
                     if axis == 'x':
                         rot_speed = fvalue
@@ -235,4 +227,11 @@ def command_loop(): # Throttle when the joystick sends too many events. FIXME: i
 
 
 if __name__ == '__main__':
-    control_loop()
+    import usb_controller
+    dev = usb_controller.USBController([usb_controller.COMMAND_INTERFACE])
+
+    thread = threading.Thread(target=control_loop)
+    thread.setDaemon(True)
+    thread.start()
+    
+    command_loop() # Crash main thread on USB error.

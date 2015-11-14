@@ -257,8 +257,8 @@ void APP_Tasks()
     }
 #endif
     
+#if 1 // Button tests
     if (BUTTON_IsPressed(BUTTON_S1)) {
-        //LOG("PRESSED S1");
         static int i = 0;
         i++;
         if (i % 100 == 0) {
@@ -270,6 +270,7 @@ void APP_Tasks()
         char * str = "COMMAND_IN";
         CommandInSend((uint8_t *)str, strlen(str));
     }
+#endif
     
     if (false) {
         IsochronousSend();
@@ -288,6 +289,7 @@ void APP_Tasks()
         }
     }
 
+#if 0 // CDC echo test
     /* Check to see if there is a transmission in progress, if there isn't, then
      * we can see about performing an echo response to data received.
      */
@@ -330,6 +332,7 @@ void APP_Tasks()
             putUSBUSART(writeBuffer,numBytesRead);
         }
     }
+#endif
 
     DebugService();
     CDCService();

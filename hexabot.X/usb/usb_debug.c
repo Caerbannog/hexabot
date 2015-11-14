@@ -27,6 +27,8 @@ static volatile uint8_t buffer_2[DEBUG_BUFFER_SIZE];
 static volatile uint8_t * current_buffer;
 static uint8_t current_buffer_len;
 
+static int dropped_lines = 0;
+
 
 void DebugInit(void)
 {
@@ -34,31 +36,35 @@ void DebugInit(void)
     current_buffer_len = 0;
 }
 
-
 void DebugLog(const char * file, int line, const char * format, ...)
 {
     const uint8_t buffer_size = DEBUG_BUFFER_SIZE;
     
-    current_buffer_len +=  snprintf((char *)current_buffer + current_buffer_len, buffer_size - current_buffer_len, "%s:%d ", file, line);
-    if (current_buffer_len >= buffer_size) {
-        current_buffer_len = buffer_size;
+    uint8_t new_len = current_buffer_len;
+    
+    new_len +=  snprintf((char *)current_buffer + new_len, buffer_size - new_len, "%s:%d ", file, line);
+    if (new_len >= buffer_size) {
+        dropped_lines++;
         return;
     }
     
     va_list args;
     va_start(args, format);
-    current_buffer_len += vsnprintf((char *)current_buffer + current_buffer_len, buffer_size - current_buffer_len, format, args); // FIXME check negative return
+    new_len += vsnprintf((char *)current_buffer + new_len, buffer_size - new_len, format, args);
     va_end(args);
-    if (current_buffer_len >= buffer_size) {
-        current_buffer_len = buffer_size;
+    if (new_len >= buffer_size) { // Format errors that cause negative return values are probably caught here too.
+        dropped_lines++;
         return;
     }
     
-    current_buffer_len +=  snprintf((char *)current_buffer + current_buffer_len, buffer_size - current_buffer_len, "\r\n");
-    if (current_buffer_len >= buffer_size) {
-        current_buffer_len = buffer_size;
+    new_len +=  snprintf((char *)current_buffer + new_len, buffer_size - new_len, "\r\n");
+    if (new_len >= buffer_size) {
+        dropped_lines++;
         return;
     }
+    
+    // There was room for the whole line, so take it into account.
+    current_buffer_len = new_len;
 }
 
 
@@ -74,5 +80,11 @@ void DebugService(void)
             current_buffer = buffer_1;
         }
         current_buffer_len = 0;
+        
+        if (dropped_lines) { // The USB layer couln't send the data fast enough. If this is a problem, calling CDCService() more often could help.
+            current_buffer[0] = '\n'; // Send an empty line to show that the overflow happened.
+            current_buffer_len++;
+            dropped_lines = 0;
+        }
     }
 }

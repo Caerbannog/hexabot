@@ -17,6 +17,7 @@
 #define	APP_REGISTERS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
 
@@ -57,6 +58,9 @@ extern float odometry_r_arc;
 extern float odometry_l_arc;
 extern float odometry_rotation_imbalance;
 extern float half_wheel_distance;
+
+extern float motor_ticks_per_meter;
+extern bool stop_motors;
 
 
 void register_command(uint8_t * buffer, uint8_t received);

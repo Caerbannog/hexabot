@@ -25,7 +25,6 @@
 #include <system_config.h>
 
 #include <app.h>
-#include <app_led_usb_status.h>
 
 #include <usb/usb.h>
 #include <usb/usb_device.h>
@@ -121,19 +120,16 @@ bool USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, uint16_t size
             break;
 
         case EVENT_SOF:
-            /* We are using the SOF as a timer to time the LED indicator.  Call
-             * the LED update function here. */
-            APP_LEDUpdateUSBStatus();
+            /* We could use the SOF as a timer. */
+            APP_UpdateUSBStatus(true);
             break;
 
         case EVENT_SUSPEND:
-            /* Update the LED status for the suspend event. */
-            APP_LEDUpdateUSBStatus();
+            APP_UpdateUSBStatus(false);
             break;
 
         case EVENT_RESUME:
-            /* Update the LED status for the resume event. */
-            APP_LEDUpdateUSBStatus();
+            APP_UpdateUSBStatus(true);
             break;
 
         case EVENT_CONFIGURED:
@@ -152,6 +148,7 @@ bool USER_USB_CALLBACK_EVENT_HANDLER(USB_EVENT event, void *pdata, uint16_t size
             break;
 
         case EVENT_BUS_ERROR:
+            APP_UpdateUSBStatus(false);
             break;
 
         case EVENT_TRANSFER_TERMINATED:

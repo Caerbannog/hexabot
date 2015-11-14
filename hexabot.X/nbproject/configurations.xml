@@ -20,7 +20,6 @@
         <itemPath>usb/usb_debug.h</itemPath>
         <itemPath>usb/usb_isochronous.h</itemPath>
       </logicalFolder>
-      <itemPath>app_led_usb_status.h</itemPath>
       <itemPath>buttons.h</itemPath>
       <itemPath>leds.h</itemPath>
       <itemPath>io_mapping.h</itemPath>
@@ -43,7 +42,6 @@
         <itemPath>usb/usb_debug.c</itemPath>
         <itemPath>usb/usb_isochronous.c</itemPath>
       </logicalFolder>
-      <itemPath>app_led_usb_status.c</itemPath>
       <itemPath>buttons.c</itemPath>
       <itemPath>leds.c</itemPath>
       <itemPath>main.c</itemPath>

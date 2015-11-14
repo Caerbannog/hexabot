@@ -28,6 +28,10 @@
 
 #include <usb/usb_device_cdc.h>
 
+
+#define REVERSED_MOTOR   (-1) // Reversed because motors are in opposite directions.
+
+
 /*********************************************************************
 * Overview: Initializes the demo code
 *
@@ -39,6 +43,9 @@
 *
 ********************************************************************/
 void APP_Initialize();
+
+
+void APP_UpdateUSBStatus(bool connected);
 
 /*********************************************************************
 * Overview: Keeps the demo running.

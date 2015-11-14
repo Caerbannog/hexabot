@@ -49,7 +49,7 @@ sudo pip3 install pyusb==1.0.0b1 autobahn==0.10.4 pyinotify==0.9.6 bottle==0.12.
 sudo adduser $USER dialout
 sudo adduser $USER wireshark
 echo usbmon | sudo tee -a /etc/modules
-sudo cp hexabot.rules /etc/udev/rules.d/
+sudo cp 99-hexabot.rules /etc/udev/rules.d/
 sudo pip install miniterm.py
 ```
 

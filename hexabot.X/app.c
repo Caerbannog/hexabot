@@ -15,7 +15,6 @@
 
 /** INCLUDES *******************************************************/
 #include "app.h"
-#include "app_led_usb_status.h"
 #include "app_registers.h"
 #include "app_procedures.h"
 #include <usb/usb_commands.h>
@@ -63,10 +62,19 @@ void APP_Initialize()
     OpenTimer23(T2_ON & T2_IDLE_STOP & T2_GATE_OFF & T2_PS_1_256 & T2_32BIT_MODE_ON
                & T2_SOURCE_INT & T2_INT_PRIOR_0 & T2_INT_OFF, 0xFFFFFFFF); // Will overflow after 5.09 hours (prescaler * period / fcy / 3600).
 }
-#define TIMER23_TICK_S          (256 /*prescaler*/ / (float)Fcy)
-#define MOTOR_TICKS_PER_METER   57000 // Approximate
-// encoder ticks per motor turn 6.25*500 = 3125, belt ratio=?
-#define REVERSED_MOTOR   (-1) // Reversed because motors are in opposite directions.
+
+
+void APP_UpdateUSBStatus(bool connected)
+{
+    if (connected) {
+        LED_On(LED_Y);
+    }
+    else {
+        LED_Off(LED_Y);
+        stop_motors = 1;
+    }
+}
+
 
 /*********************************************************************
 * Overview: Keeps the demo running.
@@ -126,7 +134,7 @@ void APP_Tasks()
         last_time_asserv = new_time_asserv;
         
         unsigned int ticks_r = Read32bitQEI1VelocityCounter();
-        float r_speed = (*(int*)&ticks_r) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
+        float r_speed = (*(int*)&ticks_r) / elapsed_asserv / motor_ticks_per_meter;
         
         static float r_speed_err_P_previous = 0;
         static float r_speed_err_I = 0;
@@ -154,7 +162,7 @@ void APP_Tasks()
         //*/
         
         unsigned int ticks_l = Read32bitQEI2VelocityCounter();
-        float l_speed = (REVERSED_MOTOR * *(int*)&ticks_l) / elapsed_asserv / (float)MOTOR_TICKS_PER_METER;
+        float l_speed = (REVERSED_MOTOR * *(int*)&ticks_l) / elapsed_asserv / motor_ticks_per_meter;
         
         static float l_speed_err_P_previous = 0;
         static float l_speed_err_I = 0;
@@ -207,14 +215,20 @@ void APP_Tasks()
     motor_l_pwm = 255 - pwm_l;
   #endif
 
-    // TODO: turn OFF motors when USB link is broken: heartbeat ?
-    // TODO: command to reset the MCU
-    SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
-    LATEbits.LATE1 = (motor_r_dir == 0);
-    LATEbits.LATE2 = (motor_r_dir != 0);
-    SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
-    LATEbits.LATE4 = (motor_l_dir == 0);
-    LATEbits.LATE6 = (motor_l_dir != 0);
+    if (stop_motors) {
+        LATEbits.LATE1 = 0;
+        LATEbits.LATE2 = 0;
+        LATEbits.LATE4 = 0;
+        LATEbits.LATE6 = 0;
+    }
+    else {
+        SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
+        LATEbits.LATE1 = (motor_r_dir == 0);
+        LATEbits.LATE2 = (motor_r_dir != 0);
+        SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
+        LATEbits.LATE4 = (motor_l_dir == 0);
+        LATEbits.LATE6 = (motor_l_dir != 0);
+    }
 #endif
 
 #if 1 // Odometry test

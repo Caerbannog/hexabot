@@ -58,6 +58,9 @@ float odometry_l_arc = 15.07 / 8192;
 float odometry_rotation_imbalance = 0;
 float half_wheel_distance = 14.2;
 
+float motor_ticks_per_meter = 57000; // FIXME: Approximated. Encoder ticks per motor turn 6.25*500 = 3125, belt ratio=?
+bool stop_motors = 0;
+
 const register_t registers[] = {
     // 0
     REG_VAR(PORTA), // Input.
@@ -127,6 +130,9 @@ const register_t registers[] = {
     REG_VAR(odometry_l_arc),
     REG_VAR(odometry_rotation_imbalance),
     REG_VAR(half_wheel_distance),
+    // 56
+    REG_VAR(motor_ticks_per_meter),
+    REG_VAR(stop_motors), // Set automatically on USB disconnects.
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

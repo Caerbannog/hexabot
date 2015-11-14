@@ -201,20 +201,6 @@ void APP_Tasks()
 #endif
 
 #if 1 // Motor control
-  #if 1 // Convert floats and directions.
-    motor_r_dir = (r_control_speed < 0); // REVERSED_MOTOR
-    int pwm_r = abs(r_control_speed * 255);
-    if (pwm_r > 255)
-        pwm_r = 255;
-    motor_r_pwm = 255 - pwm_r;
-    
-    motor_l_dir = (l_control_speed >= 0);
-    int pwm_l = abs(l_control_speed * 255);
-    if (pwm_l > 255)
-        pwm_l = 255;
-    motor_l_pwm = 255 - pwm_l;
-  #endif
-
     if (stop_motors) {
         LATEbits.LATE1 = 0;
         LATEbits.LATE2 = 0;
@@ -222,10 +208,25 @@ void APP_Tasks()
         LATEbits.LATE6 = 0;
     }
     else {
-        SetDCOC1PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_r_pwm);
+        // Decode motor directions and clamp to [0;1] range.
+        bool motor_r_dir = (r_control_speed < 0); // REVERSED_MOTOR
+        float motor_r_pwm = fabs(r_control_speed);
+        if (motor_r_pwm > 1)
+            motor_r_pwm = 1.;
+        else if (motor_r_pwm < 0)
+            motor_r_pwm = 0.;
+
+        bool motor_l_dir = (l_control_speed >= 0);
+        float motor_l_pwm = fabs(l_control_speed);
+        if (motor_l_pwm > 1)
+            motor_l_pwm = 1.;
+        else if (motor_l_pwm < 0)
+            motor_l_pwm = 0.;
+
+        SetDCOC1PWM(1, MOTOR_PWM_PERIOD * motor_r_pwm);
         LATEbits.LATE1 = (motor_r_dir == 0);
         LATEbits.LATE2 = (motor_r_dir != 0);
-        SetDCOC2PWM(1, MOTOR_PWM_PERIOD / 256.0 * motor_l_pwm);
+        SetDCOC2PWM(1, MOTOR_PWM_PERIOD * motor_l_pwm);
         LATEbits.LATE4 = (motor_l_dir == 0);
         LATEbits.LATE6 = (motor_l_dir != 0);
     }

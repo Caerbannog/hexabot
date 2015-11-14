@@ -33,11 +33,6 @@ extern float KP;
 extern float KI;
 extern float KD;
 
-extern uint8_t motor_r_pwm;
-extern bool motor_r_dir;
-extern uint8_t motor_l_pwm;
-extern bool motor_l_dir;
-
 extern float r_target_speed;
 extern float l_target_speed;
 extern float r_control_speed;

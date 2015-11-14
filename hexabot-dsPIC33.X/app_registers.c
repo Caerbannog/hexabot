@@ -32,11 +32,6 @@ float KP = 1.4; // 1/(m/s)
 float KI = 1.0;
 float KD = 0;
 
-uint8_t motor_r_pwm = 127;
-bool motor_r_dir = 1;
-uint8_t motor_l_pwm = 127;
-bool motor_l_dir = 1;
-
 float r_target_speed = 0;
 float l_target_speed = 0;
 float r_control_speed = 0;
@@ -104,10 +99,10 @@ const register_t registers[] = {
     REG_VAR(KI),
     REG_VAR(KD),
     // 34
-    REG_VAR(motor_r_pwm),
-    REG_VAR(motor_r_dir),
-    REG_VAR(motor_l_pwm),
-    REG_VAR(motor_l_dir),
+    REG_VAR(PORTA), // UNUSED
+    REG_VAR(PORTA),
+    REG_VAR(PORTA),
+    REG_VAR(PORTA),
     // 38
     REG_VAR(r_target_speed),
     REG_VAR(l_target_speed),

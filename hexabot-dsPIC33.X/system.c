@@ -252,12 +252,12 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
                     ENABLE_AN1_ANA | ENABLE_AN2_ANA | ENABLE_AN3_ANA | ENABLE_AN4_ANA);
             
             // PWM for Motors
-            OpenTimer4(T4_ON & T4_IDLE_STOP & T4_GATE_OFF & T4_PS_1_256 & T4_32BIT_MODE_OFF
+            OpenTimer4(T4_ON & T4_IDLE_STOP & T4_GATE_OFF & T4_PS_1_8 & T4_32BIT_MODE_OFF
                        & T4_SOURCE_INT & T4_INT_PRIOR_0 & T4_INT_OFF, MOTOR_PWM_PERIOD);
             OpenOC1(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
-                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_OUT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
                     & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4,
                     0, 0);
             PPSOutput(OUT_FN_PPS_OC1, OUT_PIN_PPS_RP80); // MOTOR_R_PWM
@@ -266,7 +266,7 @@ void SYSTEM_Initialize( SYSTEM_STATE state )
             OpenOC2(OC_IDLE_STOP & OC_TIMER4_SRC & OC_FAULTA_IN_DISABLE & OC_FAULTB_IN_DISABLE
                     & OC_FAULTC_IN_DISABLE & 0xff8f & OC_TRIG_CLEAR_SYNC & OC_PWM_EDGE_ALIGN,
                     OC_FAULT_MODE_PWM_CYCLE & OC_PWM_FAULT_OUT_LOW & (~OC_FAULT_PIN_OUT)
-                    & OC_OUT_NOT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
+                    & OC_OUT_INVERT & OC_CASCADE_DISABLE & OC_SYNC_ENABLE
                     & OC_TRIGGER_TIMER & OC_DIRN_OUTPUT & OC_SYNC_TRIG_IN_TMR4,
                     0, 0); // Same config.
             PPSOutput(OUT_FN_PPS_OC2, OUT_PIN_PPS_RP85); // MOTOR_L_PWM

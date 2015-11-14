@@ -67,10 +67,10 @@ void APP_Initialize()
 void APP_UpdateUSBStatus(bool connected)
 {
     if (connected) {
-        LED_On(LED_Y);
+        LED_Off(LED_R);
     }
     else {
-        LED_Off(LED_Y);
+        LED_On(LED_R);
         stop_motors = 1;
     }
 }

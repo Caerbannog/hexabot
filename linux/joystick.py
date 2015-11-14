@@ -164,8 +164,8 @@ def basic_loop():
 
 import time
 import threading
-left_speed = 0
-right_speed = 0
+left_speed = 0.0
+right_speed = 0.0
 command_pending = True
 def control_loop():
     global dev, command_pending, right_speed, left_speed # TODO class

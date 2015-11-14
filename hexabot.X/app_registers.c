@@ -33,9 +33,9 @@ float KI = 1.0;
 float KD = 0;
 
 uint8_t motor_r_pwm = 127;
-uint8_t motor_r_dir = 1;
+bool motor_r_dir = 1;
 uint8_t motor_l_pwm = 127;
-uint8_t motor_l_dir = 1;
+bool motor_l_dir = 1;
 
 float r_target_speed = 0;
 float l_target_speed = 0;

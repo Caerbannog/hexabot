@@ -20,7 +20,8 @@
 #include <stdbool.h>
 
 #define REG_VAR(var)     { (uint8_t *)&(var), sizeof(var) }
-
+#define NAN              (0.0 / 0.0) // Not A Number is a special float value.
+#define NOT_NAN(f)       (f == f)
 
 typedef struct {
     uint8_t * const addr;
@@ -33,11 +34,16 @@ extern float KP;
 extern float KI;
 extern float KD;
 
+extern float dist_target;
+extern float dist_target_speed;
+extern float theta_target;
+extern float theta_target_speed;
+
 extern float r_target_speed;
 extern float l_target_speed;
 extern float r_control_speed;
 extern float l_control_speed;
-extern float control_loop_interval;
+extern float asserv_interval;
 
 extern unsigned long qei3_position;
 extern unsigned long qei4_position;
@@ -46,16 +52,21 @@ extern volatile unsigned int qei4_errors;
 
 extern float odometry_x;
 extern float odometry_y;
+extern float odometry_dist;
+extern float odometry_dist_speed;
 extern float odometry_theta;
-extern float odometry_d;
-extern int odometry_resolution;
+extern float odometry_theta_speed;
+extern int odometry_interval;
+
 extern float odometry_r_arc;
 extern float odometry_l_arc;
 extern float odometry_rotation_imbalance;
-extern float half_wheel_distance;
+extern float odometry_half_wheel_distance;
 
 extern float motor_ticks_per_meter;
+extern float motor_half_wheel_distance;
 extern bool stop_motors;
+extern float max_acceleration;
 
 
 void register_command(uint8_t * buffer, uint8_t received);

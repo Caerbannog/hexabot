@@ -5,6 +5,7 @@
 # Based on information from:
 # https://www.kernel.org/doc/Documentation/input/joystick-api.txt
 
+import sys
 import os, struct, array
 from fcntl import ioctl
 
@@ -134,7 +135,7 @@ for btn in buf[:num_buttons]:
 print('%d axes found: %s' % (num_axes, ', '.join(axis_map)))
 print('%d buttons found: %s' % (num_buttons, ', '.join(button_map)))
 
-def basic_loop():
+def preview_loop():
     # Main event loop
     while True:
         evbuf = jsdev.read(8)
@@ -196,18 +197,18 @@ def control_loop():
                     print("%s: %.3f" % (axis, fvalue))
                     
                     if axis == 'x':
-                        rot_speed = fvalue
+                        rot_speed = -fvalue
                     elif axis == 'y':
                         fw_speed = -fvalue
                     else:
                         continue
                     
-                    left  = fw_speed + rot_speed
-                    right = fw_speed - rot_speed
+                    right = fw_speed + rot_speed
+                    left  = fw_speed - rot_speed
                     
                     speed_limiter = max(1.0, left, right, -left, -right)
-                    left_speed  = left / speed_limiter
                     right_speed = right / speed_limiter
+                    left_speed  = left / speed_limiter
                     
                     command_pending = True
 
@@ -227,11 +228,14 @@ def command_loop(): # Throttle when the joystick sends too many events. FIXME: i
 
 
 if __name__ == '__main__':
-    import usb_controller
-    dev = usb_controller.USBController([usb_controller.COMMAND_INTERFACE])
+    if 'preview' in sys.argv:
+        preview_loop()
+    else:
+        import usb_controller
+        dev = usb_controller.USBController([usb_controller.COMMAND_INTERFACE])
 
-    thread = threading.Thread(target=control_loop)
-    thread.setDaemon(True)
-    thread.start()
+        thread = threading.Thread(target=control_loop)
+        thread.setDaemon(True)
+        thread.start()
     
-    command_loop() # Crash main thread on USB error.
+        command_loop() # Crash main thread on USB error.

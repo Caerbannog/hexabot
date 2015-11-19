@@ -88,4 +88,11 @@ void SYSTEM_Initialize( SYSTEM_STATE state );
   #define ENABLE_CN_QEI4     EnableCNF0; EnableCNF1; // ENC4 MOTOR_L
 #endif
 
+#define BOUNDS(low, x, high) ({\
+    __typeof__(low) __low = (low);\
+    __typeof__(x) __x = (x); \
+    __typeof__(high) __high = (high);\
+    min(__low, max(__x, __high));\
+    }) // bounds/saturate/clamp/clip
+
 #endif //SYSTEM_H

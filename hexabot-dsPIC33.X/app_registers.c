@@ -32,11 +32,16 @@ float KP = 1.4; // 1/(m/s)
 float KI = 1.0;
 float KD = 0;
 
+float dist_target = NAN;
+float dist_target_speed = NAN;
+float theta_target = NAN;
+float theta_target_speed = NAN;
+
 float r_target_speed = 0;
 float l_target_speed = 0;
 float r_control_speed = 0;
 float l_control_speed = 0;
-float control_loop_interval = .01;
+float asserv_interval = .005;
 
 unsigned long qei3_position = 0;
 unsigned long qei4_position = 0;
@@ -45,16 +50,21 @@ volatile unsigned int qei4_errors = 0;
 
 float odometry_x = 0;
 float odometry_y = 0;
+float odometry_dist = 0;
+float odometry_dist_speed = 0;
 float odometry_theta = 0;
-float odometry_d = 0;
-int odometry_resolution = 100;
+float odometry_theta_speed = 0;
+int odometry_interval = .005;
+
 float odometry_r_arc = 15.07 / 8192;
 float odometry_l_arc = 15.07 / 8192;
 float odometry_rotation_imbalance = 0;
-float half_wheel_distance = 14.2;
+float odometry_half_wheel_distance = 14.2;
 
 float motor_ticks_per_meter = 57000; // FIXME: Approximated. Encoder ticks per motor turn 6.25*500 = 3125, belt ratio=?
+float motor_half_wheel_distance = 9.5;
 bool stop_motors = 0;
+float max_acceleration = 0.3; // m/(s^2)
 
 const register_t registers[] = {
     // 0
@@ -99,35 +109,39 @@ const register_t registers[] = {
     REG_VAR(KI),
     REG_VAR(KD),
     // 34
-    REG_VAR(PORTA), // UNUSED
-    REG_VAR(PORTA),
-    REG_VAR(PORTA),
-    REG_VAR(PORTA),
+    REG_VAR(dist_target),
+    REG_VAR(dist_target_speed),
+    REG_VAR(theta_target),
+    REG_VAR(theta_target_speed),
     // 38
     REG_VAR(r_target_speed),
     REG_VAR(l_target_speed),
     REG_VAR(r_control_speed),
     REG_VAR(l_control_speed),
-    REG_VAR(control_loop_interval),
+    REG_VAR(asserv_interval),
     // 43
     REG_VAR(qei3_position),
     REG_VAR(qei4_position),
     REG_VAR(qei3_errors),
     REG_VAR(qei4_errors),
     // 47
-    REG_VAR(odometry_x),
-    REG_VAR(odometry_y),
-    REG_VAR(odometry_theta),
-    REG_VAR(odometry_d),
-    REG_VAR(odometry_resolution),
+    REG_VAR(odometry_x), // Estimated position
+    REG_VAR(odometry_y), // Estimated position
+    REG_VAR(odometry_dist), // Decreases when travelling backward
+    REG_VAR(odometry_dist_speed),
+    REG_VAR(odometry_theta), // Estimated absolute orientation
+    REG_VAR(odometry_theta_speed),
+    REG_VAR(odometry_interval),
     // 52
     REG_VAR(odometry_r_arc),
     REG_VAR(odometry_l_arc),
     REG_VAR(odometry_rotation_imbalance),
-    REG_VAR(half_wheel_distance),
+    REG_VAR(odometry_half_wheel_distance),
     // 56
     REG_VAR(motor_ticks_per_meter),
+    REG_VAR(motor_half_wheel_distance),
     REG_VAR(stop_motors), // Set automatically on USB disconnects.
+    REG_VAR(max_acceleration),
 };
 
 const uint8_t register_count = sizeof(registers) / sizeof(*registers);

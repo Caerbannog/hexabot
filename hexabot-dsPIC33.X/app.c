@@ -37,10 +37,6 @@
 
 #include <stdlib.h>
 
-/** VARIABLES ******************************************************/
-
-static uint8_t readBuffer[CDC_DATA_OUT_EP_SIZE];
-static uint8_t writeBuffer[CDC_DATA_IN_EP_SIZE];
 
 /*********************************************************************
 * Overview: Initializes the demo code
@@ -121,16 +117,89 @@ void APP_Tasks()
     SetDCOC3PWM(1, (0.002 * servo1 / 256 + 0.0005) * (Fcy / 256)); // 0 => 0.5ms ; 255 => 2.5ms
 #endif
 
+#if 1 // Odometry: use external encoders to estimate the position (dead-reckoning)
+    static unsigned long last_time_odometry = 0;
+    unsigned long new_time_odometry = ReadTimer23();
+    float elapsed_odometry = (float)(new_time_odometry - last_time_odometry) * TIMER23_TICK_S;
+    if (elapsed_odometry > odometry_interval) { // FIXME: decrease sampling time at fast speeds
+        int r_ticks = Read32bitQEI4VelocityCounter() * REVERSED_MOTOR;
+        int l_ticks = Read32bitQEI3VelocityCounter();
+        
+        float delta_dist = odometry_r_arc / 2 * r_ticks
+                         + odometry_l_arc / 2 * l_ticks;
+        
+        float delta_theta = odometry_r_arc * r_ticks * (1 + odometry_rotation_imbalance) / odometry_half_wheel_distance
+                          - odometry_l_arc * l_ticks * (1 - odometry_rotation_imbalance) / odometry_half_wheel_distance;
+        
+        odometry_x += delta_dist * cos(odometry_theta);
+        odometry_y += delta_dist * sin(odometry_theta);
+        
+        odometry_dist  += delta_dist;
+        odometry_theta += delta_theta;
+        
+        odometry_dist_speed  = delta_dist  / elapsed_odometry;
+        odometry_theta_speed = delta_theta / elapsed_odometry;
+        
+        static int m = 0;
+        if (++m % 25 == 0) { // TODO
+            MetricsAppend(11, odometry_x);
+            MetricsAppend(12, odometry_y);
+            MetricsAppend(13, odometry_theta);
+            MetricsAppend(14, odometry_dist);
+        }
+
+      #if 1 // Polar control system: use odometry information and polar speed/distance instructions to set individual motor target speeds
+        // The precision of the motor speed / tickspermeter is probably important.
+        
+        float dist_control_speed = 0;
+        if (NOT_NAN(dist_target)) {
+            // PID on travelled distance?
+            dist_control_speed = 1; // TODO
+        }
+        else if (NOT_NAN(dist_target_speed)) {
+            // Proportionnal speed correction, with a ramp to avoid jerks / imprecise braking
+            dist_control_speed += BOUNDS(-max_acceleration * elapsed_odometry,
+                                         dist_target_speed - odometry_dist_speed, // Desired speed increment.
+                                         +max_acceleration * elapsed_odometry);
+        }
+        else {
+            // No control of distance speed is enabled.
+        }
+        
+        float theta_control_speed = 0;
+        if (NOT_NAN(theta_target)) {
+            // PID on absolute orientation?
+            // FIXME: only P for now
+            float delta = theta_target - odometry_theta;
+            float theta_target_ticks = delta / motor_ticks_per_meter / motor_half_wheel_distance;
+            //theta_control_speed = ??
+        }
+        else if (NOT_NAN(theta_target_speed)) {
+            // Proportionnal speed correction, with a ramp to avoid jerks / imprecise braking
+            theta_control_speed += BOUNDS(-max_acceleration * elapsed_odometry,
+                                          theta_target_speed - odometry_theta_speed, // Desired speed increment.
+                                          +max_acceleration * elapsed_odometry);
+        }
+        else {
+            // No control of rotational speed is enabled.
+        }
+        
+        r_target_speed = dist_control_speed + theta_control_speed; // The resulting speed could be too much. If the left PWM saturates at 100%, the right PWM will probably be regulated the next time the loop runs.
+        l_target_speed = dist_control_speed - theta_control_speed;
+      #endif
+    }
+#endif
+
 #if 0 // Watch absolute encoder values.
     MetricsAppend(7, Read32bitQEI1PositionCounter());
     MetricsAppend(7, Read32bitQEI2PositionCounter());
 #endif
 
-#if 1 // PID control
+#if 1 // PID control of individual motors
     static unsigned long last_time_asserv = 0;
     unsigned long new_time_asserv = ReadTimer23();
     float elapsed_asserv = (float)(new_time_asserv - last_time_asserv) * TIMER23_TICK_S;
-    if (elapsed_asserv > control_loop_interval) { // Update asserv
+    if (NOT_NAN(asserv_interval) && elapsed_asserv > asserv_interval) { // Update asserv
         last_time_asserv = new_time_asserv;
         
         unsigned int ticks_r = Read32bitQEI1VelocityCounter();
@@ -140,7 +209,7 @@ void APP_Tasks()
         static float r_speed_err_I = 0;
         
         float r_speed_err_P = r_target_speed - r_speed;
-        float r_speed_err_D = (r_speed_err_P - r_speed_err_P_previous) / elapsed_asserv;
+        float r_speed_err_D = (r_speed_err_P - r_speed_err_P_previous) / elapsed_asserv; // We could derivate r_speed instead of the error.
         
         r_speed_err_P_previous = r_speed_err_P;
         
@@ -231,32 +300,6 @@ void APP_Tasks()
         LATEbits.LATE6 = (motor_l_dir != 0);
     }
 #endif
-
-#if 1 // Odometry test
-    static int k = 0;
-    if (++k % odometry_resolution == 0) {
-        int r_ticks = Read32bitQEI4VelocityCounter() * REVERSED_MOTOR;
-        int l_ticks = Read32bitQEI3VelocityCounter();
-        
-        float delta_d = odometry_r_arc / 2 * r_ticks
-                      + odometry_l_arc / 2 * l_ticks;
-        
-        odometry_theta += odometry_r_arc * r_ticks * (1 + odometry_rotation_imbalance) / half_wheel_distance
-                        - odometry_l_arc * l_ticks * (1 - odometry_rotation_imbalance) / half_wheel_distance;
-        
-        odometry_x += delta_d * cos(odometry_theta);
-        odometry_y += delta_d * sin(odometry_theta);
-        odometry_d += delta_d;
-        
-        static int m = 0;
-        if (++m % 25 == 0) {
-            MetricsAppend(11, odometry_x);
-            MetricsAppend(12, odometry_y);
-            MetricsAppend(13, odometry_theta);
-            MetricsAppend(14, odometry_d);
-        }
-    }
-#endif
     
 #if 1 // Button tests
     if (BUTTON_IsPressed(BUTTON_S1)) {
@@ -291,6 +334,8 @@ void APP_Tasks()
     }
 
 #if 0 // CDC echo test
+    static uint8_t readBuffer[CDC_DATA_OUT_EP_SIZE];
+    static uint8_t writeBuffer[CDC_DATA_IN_EP_SIZE];
     /* Check to see if there is a transmission in progress, if there isn't, then
      * we can see about performing an echo response to data received.
      */

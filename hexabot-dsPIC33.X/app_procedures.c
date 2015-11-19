@@ -29,7 +29,7 @@ uint8_t SPI_args[16] = {};
 uint8_t I2C_args[16] = {};
 
 
-void echo_proc(int n)
+void echo_proc(int n) // Used for debug.
 {
     proc_return(echo_args, n);
 }

@@ -1,0 +1,3 @@
+[submodule "hexabot-dsPIC33.X/polar-control"]
+	path = hexabot-dsPIC33.X/polar-control
+	url = git@github.com:Caerbannog/polar-control.git

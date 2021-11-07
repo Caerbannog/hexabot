@@ -3,7 +3,7 @@ Hexabot Sources
 
 Design files and source code of a mobile robot for the [Eurobot competition](http://www.eurobot.org/).
 
-The controller board is built in [KiCad](http://www.kicad-pcb.org/)
+The controller board is built in [KiCad](http://www.kicad.org/)
 around a [dsPIC33EP256MU806](https://www.microchip.com/products/dsPIC33EP256MU806) (QFN, motor control, USB).
 You can control it from your development machine or an embedded Linux like the Raspberry Pi (raspbian jessie recommended).
 
